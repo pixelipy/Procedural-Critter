@@ -1,0 +1,65 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Leg.tscn" type="PackedScene" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://Spider.gd" type="Script" id=3]
+
+[node name="Spider" type="KinematicBody2D"]
+modulate = Color( 0, 0, 0, 1 )
+script = ExtResource( 3 )
+x_speed = 120
+max_step_rate = 0.74
+legs_to_move_at_same_time = 2
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="FrontLegs" type="Node2D" parent="."]
+
+[node name="Leg4" parent="FrontLegs" instance=ExtResource( 1 )]
+position = Vector2( 18.7444, -0.649417 )
+
+[node name="Leg5" parent="FrontLegs" instance=ExtResource( 1 )]
+position = Vector2( 14.2546, 5.52411 )
+
+[node name="Leg6" parent="FrontLegs" instance=ExtResource( 1 )]
+position = Vector2( 8.08101, 13.3814 )
+
+[node name="BackLegs" type="Node2D" parent="."]
+
+[node name="Leg6" parent="BackLegs" instance=ExtResource( 1 )]
+position = Vector2( -21.6642, -0.649417 )
+flipped = false
+
+[node name="Leg7" parent="BackLegs" instance=ExtResource( 1 )]
+position = Vector2( -13.807, 6.08535 )
+flipped = false
+
+[node name="Leg8" parent="BackLegs" instance=ExtResource( 1 )]
+position = Vector2( -7.63347, 13.9426 )
+flipped = false
+
+[node name="LowMidCheck" type="RayCast2D" parent="."]
+position = Vector2( 95.6604, 1 )
+enabled = true
+cast_to = Vector2( 0, 90 )
+
+[node name="HighMidCheck" type="RayCast2D" parent="."]
+position = Vector2( 95.6604, 0 )
+enabled = true
+cast_to = Vector2( 0, 80 )
+
+[node name="FrontCheck" type="RayCast2D" parent="."]
+position = Vector2( 154.776, 0 )
+enabled = true
+cast_to = Vector2( 0, 200 )
+
+[node name="BackCheck" type="RayCast2D" parent="."]
+position = Vector2( -59.1958, 0 )
+enabled = true
+cast_to = Vector2( 0, 200 )
+
+[node name="Center" type="Position2D" parent="."]
+position = Vector2( 0, 134.741 )
