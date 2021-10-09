@@ -1,0 +1,108 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Spider_Test.tscn" type="PackedScene" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 30.4698, 31.6287 )
+
+[node name="World" type="Node2D"]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2( 94.0243, 359.979 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="."]
+position = Vector2( 250.431, 370.07 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D2"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D3" type="StaticBody2D" parent="."]
+position = Vector2( 430.383, 354.093 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D3"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D3"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D4" type="StaticBody2D" parent="."]
+position = Vector2( 543.063, 381.002 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D4"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D4"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D5" type="StaticBody2D" parent="."]
+position = Vector2( 717.969, 351.57 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D5"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D5"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D6" type="StaticBody2D" parent="."]
+position = Vector2( 893.717, 363.343 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D6"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D6"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D7" type="StaticBody2D" parent="."]
+position = Vector2( 931.557, 353.252 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D7"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D7"]
+shape = SubResource( 1 )
+
+[node name="Spider_Test" parent="." instance=ExtResource( 1 )]
+position = Vector2( 164.653, 245.155 )
+x_speed = 90
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+current = true

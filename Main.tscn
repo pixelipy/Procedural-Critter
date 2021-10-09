@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://IK.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+func _ready():
+	var new_text_1 = str(\"Segments: \", $IK.segmentCount)
+	var new_text_2 = str(\"Segment length: \", $IK.length)
+	var new_text_3 = str(\"Min Limb angle: \", $IK.limb_angle_min)
+	var new_text_4 = str(\"Max Limb angle: \", $IK.limb_angle_max)
+	
+	$Label.text = new_text_1
+	$Label2.text = new_text_2
+	$Label3.text = new_text_3
+	$Label4.text = new_text_4
+	
+	pass # Replace with function body.
+"
+
+[node name="Main" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="IK" parent="." instance=ExtResource( 1 )]
+position = Vector2( 458.734, 237.33 )
+segmentCount = 3
+
+[node name="Label" type="Label" parent="."]
+margin_right = 315.0
+margin_bottom = 14.0
+text = "Segments"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="."]
+margin_top = 16.0
+margin_right = 315.0
+margin_bottom = 30.0
+text = "Segments"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="Label" parent="."]
+margin_top = 31.3687
+margin_right = 315.0
+margin_bottom = 45.3687
+text = "Segments"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label4" type="Label" parent="."]
+margin_top = 47.3687
+margin_right = 315.0
+margin_bottom = 61.3687
+text = "Segments"
+__meta__ = {
+"_edit_use_anchors_": false
+}
