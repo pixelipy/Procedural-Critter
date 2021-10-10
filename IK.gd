@@ -18,12 +18,12 @@ export var flipped = false
 
 var draw_start :=[]
 var draw_end :=[]
-var smoothness = 0.3
+var smoothness = 0.15
 
 var goal_pos = Vector2.ZERO
 var int_pos = Vector2.ZERO
 var start_pos = Vector2.ZERO
-var step_height = 60.0 #how high the midpoint is
+var step_height = 100.0 #how high the midpoint is
 var cur_step_height = Vector2.ZERO
 var step_rate = 0.1 # step velocity
 var step_time= 0.0 #current time
@@ -40,10 +40,13 @@ var start_position = Vector2.ZERO
 var end_position = Vector2.ZERO
 var cur_target_position = Vector2.ZERO
 var in_step = false
+var ray_cast : RayCast2D = null
+export var order = 0
 
 onready var target_body = $target
 
 signal step
+signal finished_step
 
 func _draw()->void:
 	var col: = Color.black
@@ -53,10 +56,13 @@ func _draw()->void:
 		start = draw_start[i]
 		end = draw_end[i]
 		
-#		draw_circle(start,5,Color.white)
-		draw_line(start, end, col, 5)
+		draw_line(start, end, col, 10)
+		draw_circle(end,5,Color.black)
 
 func _ready()->void:
+	step_height = totalLength*0.3
+	if flipped:
+		step_height = totalLength*0.1
 	pinPos = Vector2.ZERO
 	# add point list including pinPos by default pointing up
 	for i in segmentCount +1:
@@ -64,6 +70,10 @@ func _ready()->void:
 	for i in posList.size() -1:
 		draw_start.append(posList[i])
 		draw_end.append(posList[i+1])
+
+func set_ray(ray : RayCast2D):
+	ray_cast = ray
+
 
 func set_pin(initial_pin : Position2D):
 	pin_body = initial_pin
@@ -75,17 +85,21 @@ func set_pin(initial_pin : Position2D):
 
 func _process(_delta:float)->void:
 	var new_target_pos : Vector2= start_position
-	if step_time < 1.0:
-		#go to intermediate position
-		if step_time <= 0.5:
+	
+	if step_time >=0 and step_time <=1.0:
+		if step_time < 0.5:
 			new_target_pos = lerp(start_position,intermediate_position,step_time*2.0)
 		#go to end position
-		elif step_time <1.0:
+		elif step_time >=0.5:
 			new_target_pos = lerp(intermediate_position,end_position,(step_time-0.5)*2.0)
-		target_body.position = new_target_pos
-		step_time += step_rate
 		if step_time >= 1.0:
+			if in_step == true:
+				emit_signal("finished_step",order)
 			in_step = false
+	step_time += step_rate
+	step_time = clamp(step_time,-1.0,1.0)
+	target_body.position = new_target_pos
+	
 	update_positions()
 	update_IK()
 	pass
@@ -100,9 +114,7 @@ func update_positions():
 
 func update_target_position(new_position : Vector2):
 	var flip = 1
-	if flipped:
-		flip = -1
-	endPos = Vector2(flip*new_position.x,new_position.y)
+	endPos = Vector2(new_position.x,new_position.y)
 	$Sprite.position = Vector2(endPos.x*flip,endPos.y)
 	pass
 
@@ -117,20 +129,21 @@ func update_IK():
 		errorDist = (endPos -posList[posList.size() -1]).length()
 		itterations += 1
 	for i in posList.size() -1:
-		if !flipped:
-			draw_start[i] = lerp(draw_start[i],posList[i],smoothness)
-			draw_end[i] = lerp(draw_end[i],posList[i+1],smoothness)
-		if flipped:
-			draw_start[i] = lerp(draw_start[i],Vector2(-posList[i].x,posList[i].y),smoothness)
-			draw_end[i] = lerp(draw_end[i],Vector2(-posList[i+1].x,posList[i+1].y),smoothness)
+		draw_start[i] = lerp(draw_start[i],posList[i],smoothness)
+		draw_end[i] = lerp(draw_end[i],posList[i+1],smoothness)
 	update()
-	if (raycast_collision.x-endPos.x) > 220:
+	if (ray_cast.get_collision_point()-target_body.global_position).length() > 60:
 		if !in_step:
 			emit_signal("step", self)
-			in_step = true
+			
 		
 
-func step(target_position_point : Vector2):
+func step(cur_order : int):
+	if order != cur_order:
+		return
+	in_step = true
+	var target_position_point = ray_cast.get_collision_point()
+	
 	if target_body != null:
 		start_position = endPos
 		end_position = target_position_point - global_position
@@ -152,26 +165,24 @@ func backward_reach()->void:
 		var p2:Vector2 = posList[last -1 -i]
 		var dir:Vector2 = (p2 -p1).normalized()
 		
-		if last-i-2 >= 0:
-			var previous_angle = 0
-			var inv_dir = -1*dir
+		if !flipped:
+			if last-i-2 >= 0:
+				var previous_angle = 0
+				var inv_dir = -1*dir
 
-			var p1_previous:Vector2 = posList[last-i-2]
-			var p2_previous:Vector2 = posList[last-i-1]
-			var dir_previous:Vector2 = (p2_previous -p1_previous).normalized()
+				var p1_previous:Vector2 = posList[last-i-2]
+				var p2_previous:Vector2 = posList[last-i-1]
+				var dir_previous:Vector2 = (p2_previous -p1_previous).normalized()
 
-			previous_angle = dir_previous.angle()
-			var cur_angle = inv_dir.angle()
+				previous_angle = dir_previous.angle()
+				var cur_angle = inv_dir.angle()
 
-			var new_angle_limit_min = previous_angle + deg2rad(limb_angle_min)
-			var new_angle_limit_max = previous_angle + deg2rad(limb_angle_max)
+				var new_angle_limit_min = previous_angle + deg2rad(limb_angle_min)
+				var new_angle_limit_max = previous_angle + deg2rad(limb_angle_max)
 
-			var new_angle = clamp(cur_angle,new_angle_limit_min,new_angle_limit_max)
-
-			var new_dir = Vector2(cos(new_angle),sin(new_angle)).normalized()
-
-			dir = -1*new_dir
-		
+				var new_angle = clamp(cur_angle,new_angle_limit_min,new_angle_limit_max)
+				var new_dir = Vector2(cos(new_angle),sin(new_angle)).normalized()
+				dir = -1*new_dir
 		p2 = p1 +(dir *length)
 		posList[last -1 -i] = p2
 
@@ -182,22 +193,23 @@ func forward_reach()->void:
 		var p1:Vector2 = posList[i]
 		var p2:Vector2 = posList[i +1]
 		var dir:Vector2 = (p2 -p1).normalized()
-		
+
 		#####limit angles
-		if i > 0:
-			var previous_angle = 0
-			var p1_previous:Vector2 = posList[i-1]
-			var p2_previous:Vector2 = posList[i]
-			var dir_previous:Vector2 = (p2_previous -p1_previous).normalized()
+		if ! flipped:
+			if i > 0:
+				var previous_angle = 0
+				var p1_previous:Vector2 = posList[i-1]
+				var p2_previous:Vector2 = posList[i]
+				var dir_previous:Vector2 = (p2_previous -p1_previous).normalized()
 
-			previous_angle = dir_previous.angle()
-			var cur_angle = dir.angle()
-			var new_angle_limit_min = previous_angle + deg2rad(limb_angle_min)
-			var new_angle_limit_max = previous_angle + deg2rad(limb_angle_max)
+				previous_angle = dir_previous.angle()
+				var cur_angle = dir.angle()
+				var new_angle_limit_min = previous_angle + deg2rad(limb_angle_min)
+				var new_angle_limit_max = previous_angle + deg2rad(limb_angle_max)
 
-			var new_angle = clamp(cur_angle,new_angle_limit_min,new_angle_limit_max)
-			var new_dir = Vector2(cos(new_angle),sin(new_angle)).normalized()
-			dir = new_dir
-		
+				var new_angle = clamp(cur_angle,new_angle_limit_min,new_angle_limit_max)
+
+				var new_dir = Vector2(cos(new_angle),sin(new_angle)).normalized()
+				dir = new_dir
 		p2 = p1 +(dir *length)
 		posList[i +1] = p2

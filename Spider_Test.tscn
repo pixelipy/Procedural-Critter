@@ -1,28 +1,36 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://IK.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Spider_Test.gd" type="Script" id=2]
 [ext_resource path="res://Spider_Body.gd" type="Script" id=3]
-[ext_resource path="res://icon.png" type="Texture" id=4]
 
 [node name="Spider_Test" type="Node2D"]
 script = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
 x_speed = 4600
 
 [node name="Front_legs2" type="Node2D" parent="."]
 
+[node name="IK4" parent="Front_legs2" instance=ExtResource( 1 )]
+position = Vector2( 25.4605, 8.11749 )
+length = 70
+segmentCount = 3
+order = 1
+
 [node name="IK5" parent="Front_legs2" instance=ExtResource( 1 )]
-position = Vector2( 18.4589, 14.7159 )
-length = 50
+position = Vector2( 22.7069, 9.70805 )
 segmentCount = 3
 
 [node name="IK6" parent="Front_legs2" instance=ExtResource( 1 )]
-position = Vector2( 3.33981, 14.7159 )
-length = 50
+position = Vector2( 16.2777, 11.5979 )
+length = 35
 segmentCount = 3
+order = 1
+
+[node name="IK7" parent="Front_legs2" instance=ExtResource( 1 )]
+position = Vector2( 7.11609, 10.0003 )
+length = 75
+segmentCount = 2
+flipped = true
 
 [node name="Spider" type="KinematicBody2D" parent="."]
 script = ExtResource( 3 )
@@ -30,41 +38,68 @@ script = ExtResource( 3 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spider"]
 
 [node name="Polygon2D" type="Polygon2D" parent="Spider"]
-scale = Vector2( 3.60956, 3.60956 )
+position = Vector2( -13.5442, -6.29961 )
+scale = Vector2( 5.397, 4.143 )
 color = Color( 0, 0, 0, 1 )
-polygon = PoolVector2Array( 10.1813, -3.40145, 5.99266, -9.98197, -0.203, -11.7272, -8.84202, -10.1565, -13.2052, -4.48441, -13.1179, 4.59092, -9.54012, 9.65216, -1.51194, 11.5719, 7.03981, 9.30311, 10.1813, 4.15461 )
+polygon = PoolVector2Array( 10.7043, -3.40145, 7.40123, -11.2488, 1.50121, -13.7791, -5.00221, -13.8664, -10.1647, -11.5978, -13.7852, -2.08731, -13.7852, 0.70476, -7.68404, 4.98012, -0.510156, 5.85264, 9.34555, 6.72516, 10.7915, 4.15461 )
 
-[node name="FrontCheck" type="RayCast2D" parent="Spider"]
-position = Vector2( 115.584, 0 )
-enabled = true
-cast_to = Vector2( 0, 200 )
+[node name="Polygon2D2" type="Polygon2D" parent="Spider"]
+position = Vector2( 53.467, 5.03968 )
+scale = Vector2( 2, 2 )
+color = Color( 0, 0, 0, 1 )
+polygon = PoolVector2Array( 10.7043, -3.40145, 5.90481, -9.98197, -0.0290671, -11.7272, -5.26484, -10.1565, -10.2388, -4.48441, -10.3261, 4.59092, -5.96294, 9.65216, -0.116332, 11.5719, 7.03981, 9.30311, 10.7915, 4.15461 )
 
-[node name="BackCheck" type="RayCast2D" parent="Spider"]
-position = Vector2( -109.304, 0 )
+[node name="lowCheck" type="RayCast2D" parent="Spider"]
+position = Vector2( 95.1425, 0 )
 enabled = true
-cast_to = Vector2( 0, 200 )
+cast_to = Vector2( 0, 100 )
+
+[node name="highCheck" type="RayCast2D" parent="Spider"]
+position = Vector2( 95.1425, 0 )
+enabled = true
+cast_to = Vector2( 0, 80 )
 
 [node name="Front_legs" type="Node2D" parent="."]
 
 [node name="IK3" parent="Front_legs" instance=ExtResource( 1 )]
-position = Vector2( 27.5933, 23.2204 )
-length = 50
+position = Vector2( 31.5662, 8.43247 )
+length = 70
 segmentCount = 3
 
 [node name="IK4" parent="Front_legs" instance=ExtResource( 1 )]
-position = Vector2( 12.4742, 23.2204 )
-length = 50
+position = Vector2( 28.8126, 10.023 )
+segmentCount = 3
+order = 1
+
+[node name="IK5" parent="Front_legs" instance=ExtResource( 1 )]
+position = Vector2( 22.3834, 11.9129 )
+length = 35
 segmentCount = 3
 
-[node name="Pin_Test" type="Position2D" parent="."]
-position = Vector2( 10, 9.43877 )
-z_index = 1
+[node name="IK6" parent="Front_legs" instance=ExtResource( 1 )]
+position = Vector2( 13.2218, 10.3152 )
+length = 75
+segmentCount = 2
+flipped = true
+order = 1
 
-[node name="icon" type="Sprite" parent="Pin_Test"]
-scale = Vector2( 0.2, 0.2 )
-texture = ExtResource( 4 )
+[node name="min_step_timer" type="Timer" parent="."]
+wait_time = 0.5
 
+[connection signal="finished_step" from="Front_legs2/IK4" to="." method="_on_IK_finished_step"]
+[connection signal="step" from="Front_legs2/IK4" to="." method="_on_IK_step"]
+[connection signal="finished_step" from="Front_legs2/IK5" to="." method="_on_IK_finished_step"]
 [connection signal="step" from="Front_legs2/IK5" to="." method="_on_IK_step"]
+[connection signal="finished_step" from="Front_legs2/IK6" to="." method="_on_IK_finished_step"]
 [connection signal="step" from="Front_legs2/IK6" to="." method="_on_IK_step"]
+[connection signal="finished_step" from="Front_legs2/IK7" to="." method="_on_IK_finished_step"]
+[connection signal="step" from="Front_legs2/IK7" to="." method="_on_IK_step"]
+[connection signal="finished_step" from="Front_legs/IK3" to="." method="_on_IK_finished_step"]
 [connection signal="step" from="Front_legs/IK3" to="." method="_on_IK_step"]
+[connection signal="finished_step" from="Front_legs/IK4" to="." method="_on_IK_finished_step"]
 [connection signal="step" from="Front_legs/IK4" to="." method="_on_IK_step"]
+[connection signal="finished_step" from="Front_legs/IK5" to="." method="_on_IK_finished_step"]
+[connection signal="step" from="Front_legs/IK5" to="." method="_on_IK_step"]
+[connection signal="finished_step" from="Front_legs/IK6" to="." method="_on_IK_finished_step"]
+[connection signal="step" from="Front_legs/IK6" to="." method="_on_IK_step"]
+[connection signal="timeout" from="min_step_timer" to="." method="_on_min_step_timer_timeout"]

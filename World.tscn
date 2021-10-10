@@ -9,6 +9,7 @@ extents = Vector2( 30.4698, 31.6287 )
 [node name="World" type="Node2D"]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 94.0243, 359.979 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
@@ -22,7 +23,8 @@ texture = ExtResource( 2 )
 shape = SubResource( 1 )
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
-position = Vector2( 250.431, 370.07 )
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 242.349, 352.563 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -35,7 +37,8 @@ texture = ExtResource( 2 )
 shape = SubResource( 1 )
 
 [node name="StaticBody2D3" type="StaticBody2D" parent="."]
-position = Vector2( 430.383, 354.093 )
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 411.65, 406.586 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -48,7 +51,8 @@ texture = ExtResource( 2 )
 shape = SubResource( 1 )
 
 [node name="StaticBody2D4" type="StaticBody2D" parent="."]
-position = Vector2( 543.063, 381.002 )
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 590.198, 400.85 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -61,7 +65,8 @@ texture = ExtResource( 2 )
 shape = SubResource( 1 )
 
 [node name="StaticBody2D5" type="StaticBody2D" parent="."]
-position = Vector2( 717.969, 351.57 )
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 651.302, 359.979 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -74,7 +79,8 @@ texture = ExtResource( 2 )
 shape = SubResource( 1 )
 
 [node name="StaticBody2D6" type="StaticBody2D" parent="."]
-position = Vector2( 893.717, 363.343 )
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 705.939, 324.769 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -87,7 +93,8 @@ texture = ExtResource( 2 )
 shape = SubResource( 1 )
 
 [node name="StaticBody2D7" type="StaticBody2D" parent="."]
-position = Vector2( 931.557, 353.252 )
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 921.465, 359.979 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -99,8 +106,36 @@ texture = ExtResource( 2 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D7"]
 shape = SubResource( 1 )
 
+[node name="StaticBody2D8" type="StaticBody2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 1106.87, 359.979 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D8"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D8"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D9" type="StaticBody2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 1244.6, 359.979 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D9"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D9"]
+shape = SubResource( 1 )
+
 [node name="Spider_Test" parent="." instance=ExtResource( 1 )]
-position = Vector2( 164.653, 245.155 )
+position = Vector2( 123.031, 240.582 )
 x_speed = 90
 
 [node name="Camera2D" type="Camera2D" parent="."]
