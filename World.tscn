@@ -1,12 +1,14 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Spider_Test.tscn" type="PackedScene" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://World.gd" type="Script" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 30.4698, 31.6287 )
 
 [node name="World" type="Node2D"]
+script = ExtResource( 3 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 modulate = Color( 0, 0, 0, 1 )
@@ -24,7 +26,7 @@ shape = SubResource( 1 )
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 242.349, 352.563 )
+position = Vector2( 182.417, 351.814 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -38,7 +40,7 @@ shape = SubResource( 1 )
 
 [node name="StaticBody2D3" type="StaticBody2D" parent="."]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 411.65, 406.586 )
+position = Vector2( 413.149, 378.118 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -50,9 +52,23 @@ texture = ExtResource( 2 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D3"]
 shape = SubResource( 1 )
 
+[node name="StaticBody2D10" type="StaticBody2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 513.535, 347.403 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D10"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D10"]
+shape = SubResource( 1 )
+
 [node name="StaticBody2D4" type="StaticBody2D" parent="."]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 590.198, 400.85 )
+position = Vector2( 370.343, 359.578 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -80,7 +96,7 @@ shape = SubResource( 1 )
 
 [node name="StaticBody2D6" type="StaticBody2D" parent="."]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 705.939, 324.769 )
+position = Vector2( 699.196, 337.504 )
 scale = Vector2( 3.72, 1 )
 __meta__ = {
 "_edit_group_": true
@@ -90,6 +106,48 @@ __meta__ = {
 texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D6"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D11" type="StaticBody2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 636.267, 322.521 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D11"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D11"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D12" type="StaticBody2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 609.298, 333.01 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D12"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D12"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D13" type="StaticBody2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 478.945, 365.223 )
+scale = Vector2( 3.72, 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D13"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D13"]
 shape = SubResource( 1 )
 
 [node name="StaticBody2D7" type="StaticBody2D" parent="."]
@@ -134,10 +192,23 @@ texture = ExtResource( 2 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D9"]
 shape = SubResource( 1 )
 
-[node name="Spider_Test" parent="." instance=ExtResource( 1 )]
-position = Vector2( 123.031, 240.582 )
-x_speed = 90
+[node name="StaticBody2D14" type="StaticBody2D" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 408.012, 541.408 )
+scale = Vector2( 23.2718, 5.88564 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D14"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D14"]
+shape = SubResource( 1 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
 current = true
+
+[node name="Spider_Test" parent="." instance=ExtResource( 1 )]
+position = Vector2( 481.537, 244.843 )

@@ -8,98 +8,105 @@
 script = ExtResource( 2 )
 x_speed = 4600
 
-[node name="Front_legs2" type="Node2D" parent="."]
+[node name="Back_legs" type="Node2D" parent="."]
 
-[node name="IK4" parent="Front_legs2" instance=ExtResource( 1 )]
-position = Vector2( 25.4605, 8.11749 )
+[node name="IK4" parent="Back_legs" instance=ExtResource( 1 )]
+position = Vector2( 20.7551, 9.70696 )
+length = 40
+segmentCount = 3
+flipped = true
+
+[node name="IK5" parent="Back_legs" instance=ExtResource( 1 )]
+position = Vector2( 26.0584, 9.70696 )
+length = 42
+segmentCount = 3
+order = 1
+
+[node name="IK6" parent="Back_legs" instance=ExtResource( 1 )]
+position = Vector2( 32.0688, 9.70696 )
+length = 70
+segmentCount = 3
+
+[node name="IK7" parent="Back_legs" instance=ExtResource( 1 )]
+position = Vector2( 38.0792, 9.70696 )
 length = 70
 segmentCount = 3
 order = 1
-
-[node name="IK5" parent="Front_legs2" instance=ExtResource( 1 )]
-position = Vector2( 22.7069, 9.70805 )
-segmentCount = 3
-
-[node name="IK6" parent="Front_legs2" instance=ExtResource( 1 )]
-position = Vector2( 16.2777, 11.5979 )
-length = 35
-segmentCount = 3
-order = 1
-
-[node name="IK7" parent="Front_legs2" instance=ExtResource( 1 )]
-position = Vector2( 7.11609, 10.0003 )
-length = 75
-segmentCount = 2
-flipped = true
 
 [node name="Spider" type="KinematicBody2D" parent="."]
 script = ExtResource( 3 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Spider"]
 
-[node name="Polygon2D" type="Polygon2D" parent="Spider"]
-position = Vector2( -13.5442, -6.29961 )
-scale = Vector2( 5.397, 4.143 )
-color = Color( 0, 0, 0, 1 )
-polygon = PoolVector2Array( 10.7043, -3.40145, 7.40123, -11.2488, 1.50121, -13.7791, -5.00221, -13.8664, -10.1647, -11.5978, -13.7852, -2.08731, -13.7852, 0.70476, -7.68404, 4.98012, -0.510156, 5.85264, 9.34555, 6.72516, 10.7915, 4.15461 )
+[node name="Body" type="Node2D" parent="Spider"]
 
-[node name="Polygon2D2" type="Polygon2D" parent="Spider"]
-position = Vector2( 53.467, 5.03968 )
-scale = Vector2( 2, 2 )
-color = Color( 0, 0, 0, 1 )
+[node name="Torso" type="Polygon2D" parent="Spider/Body"]
+position = Vector2( 30.7289, -8.13203 )
+scale = Vector2( 3, 3 )
+color = Color( 0.309804, 0.0470588, 0.0470588, 1 )
+polygon = PoolVector2Array( 10.7043, -3.40145, 5.90481, -8.1257, -0.0290671, -8.59818, -5.81144, -7.33825, -10.2388, -4.48441, -11.3236, -1.03865, -10.3261, 2.58362, -5.96294, 7.15084, -0.116332, 7.93829, 7.03981, 7.46582, 10.7915, 4.15461, 11.8275, 0.0637836 )
+
+[node name="Head" type="Polygon2D" parent="Spider/Body/Torso"]
+position = Vector2( 9.32749, -0.511066 )
+scale = Vector2( 0.412201, 0.424809 )
+color = Color( 0.054902, 0, 1, 1 )
 polygon = PoolVector2Array( 10.7043, -3.40145, 5.90481, -9.98197, -0.0290671, -11.7272, -5.26484, -10.1565, -10.2388, -4.48441, -10.3261, 4.59092, -5.96294, 9.65216, -0.116332, 11.5719, 7.03981, 9.30311, 10.7915, 4.15461 )
 
+[node name="Lower" type="Polygon2D" parent="Spider/Body/Torso"]
+show_behind_parent = true
+position = Vector2( -27.4923, -4.00665 )
+scale = Vector2( 2.22465, 1.75998 )
+color = Color( 0.262745, 0.180392, 0.482353, 1 )
+texture_scale = Vector2( 5, 5 )
+invert_border = 0.1
+polygon = PoolVector2Array( 9.79029, -4.95979, 7.65787, -9.07868, 4.27542, -12.5271, -1.82771, -14.1555, -5.00221, -13.8664, -9.10734, -11.3776, -11.4604, -7.92922, -12.3427, -3.52297, -11.6809, 1.74538, -7.71024, 5.48112, -4.54838, 6.82215, -0.504139, 7.10952, 3.68716, 6.72516, 8.02553, 6.05584, 10.1579, 5.00217, 11.1139, -0.936689 )
+
 [node name="lowCheck" type="RayCast2D" parent="Spider"]
-position = Vector2( 95.1425, 0 )
+position = Vector2( 61.4102, 0 )
 enabled = true
-cast_to = Vector2( 0, 100 )
+cast_to = Vector2( 0, 120 )
 
 [node name="highCheck" type="RayCast2D" parent="Spider"]
-position = Vector2( 95.1425, 0 )
+position = Vector2( 61.4102, 0 )
 enabled = true
-cast_to = Vector2( 0, 80 )
+cast_to = Vector2( 0, 100 )
 
 [node name="Front_legs" type="Node2D" parent="."]
 
 [node name="IK3" parent="Front_legs" instance=ExtResource( 1 )]
-position = Vector2( 31.5662, 8.43247 )
-length = 70
+position = Vector2( 28.1735, 9.70696 )
+length = 40
 segmentCount = 3
-
-[node name="IK4" parent="Front_legs" instance=ExtResource( 1 )]
-position = Vector2( 28.8126, 10.023 )
-segmentCount = 3
-order = 1
-
-[node name="IK5" parent="Front_legs" instance=ExtResource( 1 )]
-position = Vector2( 22.3834, 11.9129 )
-length = 35
-segmentCount = 3
-
-[node name="IK6" parent="Front_legs" instance=ExtResource( 1 )]
-position = Vector2( 13.2218, 10.3152 )
-length = 75
-segmentCount = 2
 flipped = true
 order = 1
 
-[node name="min_step_timer" type="Timer" parent="."]
-wait_time = 0.5
+[node name="IK4" parent="Front_legs" instance=ExtResource( 1 )]
+position = Vector2( 33.4768, 9.70696 )
+length = 42
+segmentCount = 3
 
-[connection signal="finished_step" from="Front_legs2/IK4" to="." method="_on_IK_finished_step"]
-[connection signal="step" from="Front_legs2/IK4" to="." method="_on_IK_step"]
-[connection signal="finished_step" from="Front_legs2/IK5" to="." method="_on_IK_finished_step"]
-[connection signal="step" from="Front_legs2/IK5" to="." method="_on_IK_step"]
-[connection signal="finished_step" from="Front_legs2/IK6" to="." method="_on_IK_finished_step"]
-[connection signal="step" from="Front_legs2/IK6" to="." method="_on_IK_step"]
-[connection signal="finished_step" from="Front_legs2/IK7" to="." method="_on_IK_finished_step"]
-[connection signal="step" from="Front_legs2/IK7" to="." method="_on_IK_step"]
-[connection signal="finished_step" from="Front_legs/IK3" to="." method="_on_IK_finished_step"]
+[node name="IK5" parent="Front_legs" instance=ExtResource( 1 )]
+position = Vector2( 39.4872, 9.70696 )
+length = 70
+segmentCount = 3
+order = 1
+
+[node name="IK6" parent="Front_legs" instance=ExtResource( 1 )]
+position = Vector2( 45.4976, 9.70696 )
+length = 70
+segmentCount = 3
+
+[node name="min_step_timer" type="Timer" parent="."]
+wait_time = 0.35
+one_shot = true
+
+[connection signal="step" from="Back_legs/IK4" to="." method="_on_IK_step"]
+[connection signal="step" from="Back_legs/IK5" to="." method="_on_IK_step"]
+[connection signal="step" from="Back_legs/IK6" to="." method="_on_IK_step"]
+[connection signal="step" from="Back_legs/IK7" to="." method="_on_IK_step"]
+[connection signal="change_direction" from="Spider" to="." method="_on_Spider_change_direction"]
 [connection signal="step" from="Front_legs/IK3" to="." method="_on_IK_step"]
-[connection signal="finished_step" from="Front_legs/IK4" to="." method="_on_IK_finished_step"]
 [connection signal="step" from="Front_legs/IK4" to="." method="_on_IK_step"]
-[connection signal="finished_step" from="Front_legs/IK5" to="." method="_on_IK_finished_step"]
 [connection signal="step" from="Front_legs/IK5" to="." method="_on_IK_step"]
-[connection signal="finished_step" from="Front_legs/IK6" to="." method="_on_IK_finished_step"]
 [connection signal="step" from="Front_legs/IK6" to="." method="_on_IK_step"]
 [connection signal="timeout" from="min_step_timer" to="." method="_on_min_step_timer_timeout"]
