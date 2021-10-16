@@ -37,6 +37,12 @@ var not_flipped_step_height = step_height
 var not_flipped_limb_angle_max = limb_angle_max
 var not_flipped_limb_angle_min = limb_angle_min
 
+var clockwise = 90
+var anticlockwise = 0.1
+
+var clockwiseConstraintAngle = clockwise
+var antiClockwiseConstraintAngle = anticlockwise
+
 var pin_body = null
 var raycast_collision = Vector2.ZERO
 
@@ -48,7 +54,9 @@ var end_position = Vector2.ZERO
 var cur_target_position = Vector2.ZERO
 var in_step = false
 var ray_cast : RayCast2D = null
-var joint_thickness : Array = [15,8,3,1]
+var joint_thickness : Array = [10,8,5,3]
+var originally_flipped
+
 
 export var order = 0
 
@@ -81,23 +89,32 @@ func _draw()->void:
 		var point = draw_start[i]+normal_vectors[i]*joint_thickness[i]/2
 		points.append(point)
 	
+#	for i in points:
+#		draw_circle(i,5,Color.black)
 	var point_pool = PoolVector2Array(points)
 	
 	if !Geometry.triangulate_polygon(point_pool).empty():
 		draw_colored_polygon(point_pool, col)
 
 func _ready()->void:
+	originally_flipped = flipped
 	step_height = totalLength*0.5
-	if flipped:
-		step_height = flipped_step_height
-		limb_angle_max = flipped_limb_angle_max
-		limb_angle_min = flipped_limb_angle_min
+	flip(flipped)
 	pinPos = Vector2.ZERO
 	# add point list including pinPos by default pointing up
 	for i in segmentCount +1:
 		posList.append(pinPos +(i *Vector2.UP *length))
 	for i in posList.size():
 		draw_start.append(posList[i])
+
+func flip(flipped : bool):
+	if flipped:
+		clockwiseConstraintAngle = anticlockwise
+		antiClockwiseConstraintAngle = clockwise
+	else:
+		clockwiseConstraintAngle = clockwise
+		antiClockwiseConstraintAngle = anticlockwise
+	pass
 
 func set_ray(ray : RayCast2D):
 	ray_cast = ray
@@ -138,6 +155,7 @@ func update_positions():
 		pinPos = pin_body.global_position - global_position
 	if target_body != null:
 		endPos = target_body.global_position - global_position+cur_step_height
+#		endPos = get_local_mouse_position()
 		pass
 
 func update_target_position(new_position : Vector2):
@@ -186,62 +204,61 @@ func straight_reach()->void:
 func backward_reach()->void:
 	var last: = posList.size() -1
 	posList[last] = endPos
-	var prev_angle = 0
-	for i in last:
-		var p1:Vector2 = posList[last -i]
-		var p2:Vector2 = posList[last -1 -i]
-		var dir:Vector2 = (p2 -p1).normalized()
-		
-		if last-i-1 >= 0:
-			var previous_angle = 0
-			var inv_dir = -1*dir
-
-			var p1_previous:Vector2 = posList[last-i-2]
-			var p2_previous:Vector2 = posList[last-i-1]
-			var dir_previous:Vector2 = (p2_previous -p1_previous).normalized()
-
-			previous_angle = dir_previous.angle()
-			var cur_angle = inv_dir.angle()
-
-			var new_angle_limit_min = previous_angle + deg2rad(limb_angle_min)
-			var new_angle_limit_max = previous_angle + deg2rad(limb_angle_max)
+	for i in range(last,0,-1):
+		if i != last:
+			var p1:Vector2 = posList[i]
+			var p2:Vector2 = posList[i-1]
+			var dir:Vector2 = (p2 -p1).normalized()
 			
-			var bigger_angle = max(new_angle_limit_max,new_angle_limit_min)
-			var smaller_angle = min(new_angle_limit_max,new_angle_limit_min)
+			var previous_p1 = posList[i+1]
+			var previous_p2 = posList[i]
+			var previous_dir = (previous_p2 -previous_p1).normalized()
 			
-			var new_angle = clamp(cur_angle,smaller_angle,bigger_angle)
-			
-			var new_dir = Vector2(cos(new_angle),sin(new_angle)).normalized()
-			dir = -1*new_dir
-		p2 = p1 +(dir *length)
-		posList[last -1 -i] = p2
+			var constrained_dir = constrain_angle(dir,previous_dir,clockwiseConstraintAngle,antiClockwiseConstraintAngle)
+			dir = constrained_dir
+			p2 = p1 +(dir *length)
+			posList[i-1] = p2
+		else:
+			var p1:Vector2 = posList[i]
+			var p2:Vector2 = posList[i-1]
+			var dir:Vector2 = (p2 -p1).normalized()
+
+			var previous_p1 = posList[i-1]
+			var previous_p2 = posList[i-2]
+			var previous_dir = (previous_p2 -previous_p1).normalized()
+
+			var constrained_dir = constrain_angle(dir,previous_dir,clockwiseConstraintAngle,antiClockwiseConstraintAngle)
+			dir = constrained_dir
+			p2 = p1 +(dir *length)
+			posList[i-1] = p2
+			pass
 
 func forward_reach()->void:
+	
 	posList[0] = pinPos
-	var prev_angle = 0
-	for i in posList.size() -1:
+	for i in posList.size()-1:
 		var p1:Vector2 = posList[i]
-		var p2:Vector2 = posList[i +1]
+		var p2:Vector2 = posList[i+1]
 		var dir:Vector2 = (p2 -p1).normalized()
 
-		#####limit angles
-		if i > 0:
-			var previous_angle = 0
-			var p1_previous:Vector2 = posList[i-1]
-			var p2_previous:Vector2 = posList[i]
-			var dir_previous:Vector2 = (p2_previous -p1_previous).normalized()
+		if i >= 1:
+			var previous_p1 = posList[i-1]
+			var previous_p2 = posList[i]
+			var previous_dir = (previous_p2-previous_p1).normalized()
+			var constrained_dir = constrain_angle(dir,previous_dir,clockwiseConstraintAngle,antiClockwiseConstraintAngle)
+			dir = constrained_dir
 
-			previous_angle = dir_previous.angle()
-			var cur_angle = dir.angle()
-			var new_angle_limit_min = previous_angle + deg2rad(limb_angle_min)
-			var new_angle_limit_max = previous_angle + deg2rad(limb_angle_max)
-			
-			var bigger_angle = max(new_angle_limit_max,new_angle_limit_min)
-			var smaller_angle = min(new_angle_limit_max,new_angle_limit_min)
-			
-			var new_angle = clamp(cur_angle,smaller_angle,bigger_angle)
-
-			var new_dir = Vector2(cos(new_angle),sin(new_angle)).normalized()
-			dir = new_dir
 		p2 = p1 +(dir *length)
-		posList[i +1] = p2
+		posList[i+1] = p2
+
+func constrain_angle(dir : Vector2, baseline : Vector2, clockwiseAngle : int, antiClockwiseAngle : int):
+	var angle = baseline.angle_to(dir)
+	
+	if rad2deg(angle) > clockwiseAngle:
+		return baseline.rotated(deg2rad(clockwiseAngle))
+	if rad2deg(angle) < -antiClockwiseAngle:
+		return baseline.rotated(deg2rad(-antiClockwiseAngle))
+	
+	return dir
+	pass
+

@@ -41,7 +41,7 @@ func _ready():
 func _on_IK_step():
 	if can_step:
 		for i in get_tree().get_nodes_in_group(str("leg",cur_order)):
-#			update_leg_info(i)
+			update_leg_info(i)
 			i.step(cur_order)
 		can_step = false
 		
@@ -55,28 +55,31 @@ func update_leg_info(leg : Node2D):
 		flip = -1
 	
 	var motion_fraction = $Spider.motion_fraction
+	var max_leg_extension
 	if $Spider.motion_fraction < 0:
-#		leg.flipped = true
-#		leg.step_height = leg.flipped_step_height
-		leg.limb_angle_max = leg.flipped_limb_angle_max
-		leg.limb_angle_min = leg.flipped_limb_angle_min
+		leg.flipped = !leg.originally_flipped
+		leg.flip(leg.flipped)
+		leg.max_leg_distance = -abs(leg.max_leg_distance)
+		
+		
+		
+		
 	else:
-#		leg.flipped = false
-#		leg.step_height = leg.not_flipped_step_height
-		leg.limb_angle_max = leg.not_flipped_limb_angle_max
-		leg.limb_angle_min = leg.not_flipped_limb_angle_min
+		leg.flipped = leg.originally_flipped
+		leg.flip(leg.flipped)
+		leg.max_leg_distance = abs(leg.max_leg_distance)
 	
-	var max_leg_extension =sign(motion_fraction)*max(abs(motion_fraction),0.5)*((leg.length-10) * (leg.segmentCount))
+#	var max_leg_extension =sign(motion_fraction)*((leg.length-10) * (leg.segmentCount))
 	
-	leg.max_leg_distance = max_leg_extension
-	leg.ray_cast.position = leg.position + Vector2(max_leg_extension,0)
+#	leg.max_leg_distance = max_leg_extension
+	leg.ray_cast.position = leg.position + Vector2(leg.max_leg_distance,0)
 	
 	pass
 
 func _physics_process(delta):
 	for i in get_tree().get_nodes_in_group("Leg"):
 		if $Spider.motion.x !=0:
-#			update_leg_info(i)
+			update_leg_info(i)
 			pass
 
 func _on_min_step_timer_timeout():
