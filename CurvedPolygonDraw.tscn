@@ -1,14 +1,18 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://CurvedPolygonDraw.gd" type="Script" id=1]
 [ext_resource path="res://smooth_path_modified.gd" type="Script" id=2]
+[ext_resource path="res://icon.png" type="Texture" id=3]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 31.7373, 31.7257 )
 
 [sub_resource type="Curve2D" id=1]
 _data = {
 "points": PoolVector2Array(  )
 }
 
-[node name="CurvedPolygonDraw" type="Control"]
+[node name="Creature_Editor" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
@@ -17,40 +21,92 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Path" type="Path2D" parent="."]
-self_modulate = Color( 1, 1, 1, 1 )
+[node name="Edges" type="HBoxContainer" parent="."]
 show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 20.0
+margin_top = 20.0
+margin_right = -20.0
+margin_bottom = -20.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Drawing_Panel" type="PanelContainer" parent="Edges"]
+margin_right = 511.0
+margin_bottom = 320.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Buttons" type="VBoxContainer" parent="Edges"]
+margin_left = 515.0
+margin_right = 600.0
+margin_bottom = 320.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="close_curve" type="Button" parent="Edges/Buttons" groups=[
+"button",
+]]
+margin_right = 85.0
+margin_bottom = 20.0
+text = "close curve"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Clear_curve" type="Button" parent="Edges/Buttons" groups=[
+"button",
+]]
+margin_top = 24.0
+margin_right = 85.0
+margin_bottom = 44.0
+text = "clear curve"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Edges"]
+position = Vector2( 257.47, 290.433 )
+scale = Vector2( 7.62766, 0.531291 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Edges/StaticBody2D"]
+self_modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Edges/StaticBody2D"]
+shape = SubResource( 2 )
+
+[node name="Body" type="Node2D" parent="."]
+show_behind_parent = true
+
+[node name="Path" type="Path2D" parent="Body"]
+self_modulate = Color( 1, 1, 1, 1 )
 curve = SubResource( 1 )
 script = ExtResource( 2 )
 spline_length = 10.0
 color = Color( 0, 0, 0, 1 )
 width = 1
 
-[node name="close_curve" type="Button" parent="." groups=[
-"button",
-]]
-margin_left = 519.137
-margin_top = 14.8325
-margin_right = 625.137
-margin_bottom = 34.8325
-text = "close curve"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Area2D" type="Area2D" parent="Body"]
 
-[node name="Clear_curve" type="Button" parent="." groups=[
-"button",
-]]
-margin_left = 519.137
-margin_top = 41.5594
-margin_right = 625.137
-margin_bottom = 61.5594
-text = "clear curve"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body/Area2D"]
 
-[connection signal="mouse_entered" from="close_curve" to="." method="_on_Button_mouse_entered"]
-[connection signal="pressed" from="close_curve" to="." method="_on_close_curve_pressed"]
-[connection signal="mouse_entered" from="Clear_curve" to="." method="_on_Button_mouse_entered"]
-[connection signal="pressed" from="Clear_curve" to="." method="_on_Clear_curve_pressed"]
+[connection signal="mouse_entered" from="Edges/Drawing_Panel" to="." method="_on_Drawing_Panel_mouse_entered"]
+[connection signal="mouse_exited" from="Edges/Drawing_Panel" to="." method="_on_Drawing_Panel_mouse_exited"]
+[connection signal="mouse_entered" from="Edges/Buttons/close_curve" to="." method="_on_Button_mouse_entered"]
+[connection signal="pressed" from="Edges/Buttons/close_curve" to="." method="_on_close_curve_pressed"]
+[connection signal="mouse_entered" from="Edges/Buttons/Clear_curve" to="." method="_on_Button_mouse_entered"]
+[connection signal="pressed" from="Edges/Buttons/Clear_curve" to="." method="_on_Clear_curve_pressed"]
+[connection signal="mouse_entered" from="Body/Area2D" to="." method="_on_Area2D_mouse_entered"]
+[connection signal="mouse_exited" from="Body/Area2D" to="." method="_on_Area2D_mouse_exited"]

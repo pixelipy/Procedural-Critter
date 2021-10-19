@@ -1,6 +1,6 @@
 extends Control
-
-onready var path = $Path
+onready var body_node = $Body
+onready var path = $Body/Path
 onready var close_path_button = $Button
 export var point_circle_size = 3
 export var handle_size = 4
@@ -13,6 +13,14 @@ var selected_out_point = false
 var held = false
 var point_select_range = 4
 var handle_select_range = 7
+var hide_point_range = 100
+var inside_body = false
+var body = null
+
+onready var area = $Body/Area2D
+onready var collisionShape = $Body/Area2D/CollisionPolygon2D
+
+var hide_points = false
 
 func _ready():
 	for i in get_tree().get_nodes_in_group("button"):
@@ -59,11 +67,18 @@ func _input(event):
 					selected_out_point = false
 					selected_in_point = false
 			
-			if closest_point_index == -1 and selected_in_point == false and selected_out_point == false:
+			if closest_point_index == -1 and selected_in_point == false and selected_out_point == false and !inside_body:
 				selected = -1
+				hide_points = true
 				path.update()
 				update()
-
+			elif closest_point_index == -1 and selected_in_point == false and selected_out_point == false and inside_body:
+				#drag_body
+				print ("drag body")
+				pass
+				
+				
+				
 func _physics_process(delta):
 	if Input.is_action_pressed("mb_left") and edit_mode:
 		if selected == -1:
@@ -80,8 +95,6 @@ func _physics_process(delta):
 				pass
 			else:
 				path.curve.set_point_position(selected,get_global_mouse_position())
-			update()
-			path.update()
 		#if handle is selected / held
 		elif selected_in_point:
 			if first_point_selected:
@@ -89,16 +102,15 @@ func _physics_process(delta):
 				path.curve.set_point_in(path.curve.get_point_count()-1,get_global_mouse_position()-path.curve.get_point_position(path.curve.get_point_count()-1))
 			else:
 				path.curve.set_point_in(selected,get_global_mouse_position()-path.curve.get_point_position(selected))
-			update()
-			path.update()
 		elif selected_out_point:
 			if first_point_selected:
 				path.curve.set_point_out(0,get_global_mouse_position()-path.curve.get_point_position(0))
 				path.curve.set_point_out(path.curve.get_point_count()-1,get_global_mouse_position()-path.curve.get_point_position(path.curve.get_point_count()-1))
 			else:
 				path.curve.set_point_out(selected,get_global_mouse_position()-path.curve.get_point_position(selected))
-			update()
-			path.update()
+		update()
+		path.update()
+		body_update()
 		pass
 	if Input.is_action_just_released("mb_left") and edit_mode:
 		held = false
@@ -126,12 +138,14 @@ func add_point(pos : Vector2):
 
 func _draw():
 	for i in path.curve.get_point_count():
-		
 		var point_pos = path.curve.get_point_position(i)
+		if hide_points:
+			return
 		if i == selected:
 			draw_circle(point_pos,point_circle_size,Color.yellow)
 		else:
 			draw_circle(point_pos,point_circle_size,Color.red)
+		
 		if selected ==i:
 			var handle_in_pos = point_pos+path.curve.get_point_in(i)
 			var handle_out_pos = point_pos+path.curve.get_point_out(i)
@@ -159,12 +173,64 @@ func _on_Clear_curve_pressed():
 	path.curve.clear_points()
 	update()
 	path.update()
+	body_delete()
+	$Edges/Buttons/close_curve.disabled = false
 	pass # Replace with function body.
 
 
 func _on_close_curve_pressed():
+	if path.curve.get_point_count() < 3:
+		return
 	add_mode = false
 	edit_mode = true
+	$Edges/Buttons/close_curve.disabled = true
 	var first_point_pos = path.curve.get_point_position(0)
 	add_point(first_point_pos)
+	body_create(path.curve.get_baked_points())
+	
+	pass # Replace with function body.
+
+func body_create(points : PoolVector2Array):
+	var polygon = points
+	body = Polygon2D.new()
+	body.polygon = polygon
+	body.color = Color.blueviolet
+	body_node.add_child(body)
+	
+	collisionShape.polygon = points
+	body.show_behind_parent = true
+	pass
+
+func body_update():
+	if body != null:
+		var polygon = path.curve.get_baked_points()
+		body.polygon = polygon
+		collisionShape.polygon = polygon
+
+func body_delete():
+	if body != null:
+		body.queue_free()
+		body = null
+	pass
+
+func _on_Drawing_Panel_mouse_entered():
+	can_add_point = true
+	update()
+	pass # Replace with function body.
+
+func _on_Drawing_Panel_mouse_exited():
+	can_add_point = false
+	if selected == -1:
+		hide_points = true
+	update()
+	pass # Replace with function body.
+
+func _on_Area2D_mouse_entered():
+	inside_body = true
+	hide_points = false
+	update()
+	pass # Replace with function body.
+
+func _on_Area2D_mouse_exited():
+	inside_body = false
 	pass # Replace with function body.
