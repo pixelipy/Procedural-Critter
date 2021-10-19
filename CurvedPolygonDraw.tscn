@@ -1,0 +1,56 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://CurvedPolygonDraw.gd" type="Script" id=1]
+[ext_resource path="res://smooth_path_modified.gd" type="Script" id=2]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array(  )
+}
+
+[node name="CurvedPolygonDraw" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Path" type="Path2D" parent="."]
+self_modulate = Color( 1, 1, 1, 1 )
+show_behind_parent = true
+curve = SubResource( 1 )
+script = ExtResource( 2 )
+spline_length = 10.0
+color = Color( 0, 0, 0, 1 )
+width = 1
+
+[node name="close_curve" type="Button" parent="." groups=[
+"button",
+]]
+margin_left = 519.137
+margin_top = 14.8325
+margin_right = 625.137
+margin_bottom = 34.8325
+text = "close curve"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Clear_curve" type="Button" parent="." groups=[
+"button",
+]]
+margin_left = 519.137
+margin_top = 41.5594
+margin_right = 625.137
+margin_bottom = 61.5594
+text = "clear curve"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="mouse_entered" from="close_curve" to="." method="_on_Button_mouse_entered"]
+[connection signal="pressed" from="close_curve" to="." method="_on_close_curve_pressed"]
+[connection signal="mouse_entered" from="Clear_curve" to="." method="_on_Button_mouse_entered"]
+[connection signal="pressed" from="Clear_curve" to="." method="_on_Clear_curve_pressed"]

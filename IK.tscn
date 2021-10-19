@@ -7,6 +7,7 @@
 "Leg",
 ]]
 script = ExtResource( 1 )
+leg_color = Color( 0.188235, 0.0196078, 0.0196078, 1 )
 
 [node name="target" type="Position2D" parent="."]
 

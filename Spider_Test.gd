@@ -13,8 +13,12 @@ var initial_target_offset = Vector2.ZERO
 export var total_order = 2
 var cur_order = 0
 var can_step = true
-
+export var cur_dir = 1
+export var step_timer_wait_time = 0.35
+var previous_dir = cur_dir
+var sensor_distance = 25
 func _ready():
+	$min_step_timer.wait_time = step_timer_wait_time
 	for i in get_tree().get_nodes_in_group("Leg"):
 		var pin = Position2D.new()
 		pin.position = i.position
@@ -22,12 +26,16 @@ func _ready():
 		var ray = RayCast2D.new()
 		ray.set_cast_to(Vector2(0,400))
 		var flipped = i.flipped
-		var flip = 1
+		var flip = 0.7
 		if flipped:
 			flip = -0.15
-		var max_leg_extension =flip*((i.length-10) * (i.segmentCount))
+		var length = 0
+		for j in i.length:
+			length += j
+		var max_leg_extension =flip*(length)
 		
 		i.max_leg_distance = max_leg_extension
+		
 		i.add_to_group(str("leg",i.order))
 		ray.position = i.position + Vector2(max_leg_extension,0)
 		ray.enabled = true
@@ -37,50 +45,40 @@ func _ready():
 		ray.force_raycast_update()
 		i.set_pin(pin)
 		i.step(i.order)
+	_on_Spider_change_direction(1)
+	cur_dir = 1
 
 func _on_IK_step():
 	if can_step:
 		for i in get_tree().get_nodes_in_group(str("leg",cur_order)):
-			update_leg_info(i)
+			flip_leg(i,cur_dir)
 			i.step(cur_order)
 		can_step = false
 		
 		$min_step_timer.start()
 	pass # Replace with function body.
 
-func update_leg_info(leg : Node2D):
+func flip_leg(leg : Node2D, new_dir : int):
+	var max_leg_extension
+	if new_dir > 0:
+		leg.flipped = leg.originally_flipped
+		leg.flip(leg.flipped)
+	elif new_dir < 0:
+		leg.flipped = !leg.originally_flipped
+		leg.flip(leg.flipped)
+	
 	var flipped = leg.flipped
 	var flip = 1
 	if flipped:
 		flip = -1
 	
-	var motion_fraction = $Spider.motion_fraction
-	var max_leg_extension
-	if $Spider.motion_fraction < 0:
-		leg.flipped = !leg.originally_flipped
-		leg.flip(leg.flipped)
-		leg.max_leg_distance = -abs(leg.max_leg_distance)
-		
-		
-		
-		
-	else:
-		leg.flipped = leg.originally_flipped
-		leg.flip(leg.flipped)
-		leg.max_leg_distance = abs(leg.max_leg_distance)
-	
-#	var max_leg_extension =sign(motion_fraction)*((leg.length-10) * (leg.segmentCount))
-	
-#	leg.max_leg_distance = max_leg_extension
-	leg.ray_cast.position = leg.position + Vector2(leg.max_leg_distance,0)
+	leg.ray_cast.position = leg.position + Vector2(cur_dir*leg.max_leg_distance,0)
 	
 	pass
 
 func _physics_process(delta):
 	for i in get_tree().get_nodes_in_group("Leg"):
-		if $Spider.motion.x !=0:
-			update_leg_info(i)
-			pass
+		flip_leg(i, cur_dir)
 
 func _on_min_step_timer_timeout():
 	$Spider.bump()
@@ -91,7 +89,26 @@ func _on_min_step_timer_timeout():
 	pass # Replace with function body.
 
 func _on_Spider_change_direction(new_dir : int):
-	$Spider/Body/Torso.scale.x = new_dir*abs($Spider/Body/Torso.scale.x)
+	$Spider/lowCheck.position.x = $Spider/Body/Torso.position.x + new_dir*sensor_distance
+	$Spider/highCheck.position.x = $Spider/Body/Torso.position.x + new_dir*sensor_distance
+	
+	for i in get_tree().get_nodes_in_group("Leg"):
+		previous_dir = cur_dir
+		$Flip_tween.stop_all()
+		$Flip_tween.interpolate_property(self,"cur_dir", cur_dir,new_dir,0.5,Tween.TRANS_LINEAR,Tween.EASE_OUT)
+		$Flip_tween.interpolate_property($Spider/Body/Torso,"scale",Vector2(cur_dir,1),Vector2(new_dir,1),0.5,Tween.TRANS_LINEAR,Tween.EASE_OUT)
+		$Flip_tween.start()
+		$min_step_timer.wait_time = 0.15
+		
 	_on_IK_step()
 	pass # Replace with function body.
 
+
+func _on_Flip_tween_tween_started(object, key):
+	
+	pass # Replace with function body.
+
+
+func _on_Flip_tween_tween_completed(object, key):
+	$min_step_timer.wait_time = step_timer_wait_time
+	pass # Replace with function body.

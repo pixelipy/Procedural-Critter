@@ -4,7 +4,7 @@ onready var low_check = $lowCheck
 onready var high_check = $highCheck
 
 var y_speed = 60.0
-var x_speed = 100.0
+var x_speed = 120.0
 var y_accel = 20.0
 var x_accel = 5.0
 var max_offset = 20.0
@@ -41,9 +41,6 @@ func _physics_process(delta):
 	
 	motion_fraction = motion.x/x_speed
 	
-	
-	
-	
 	if high_check.is_colliding():
 		motion.y -=y_accel
 	elif !low_check.is_colliding():
@@ -60,7 +57,7 @@ func _physics_process(delta):
 	move_and_collide(motion*delta)
 
 func bump():
-	if motion.x < 20:
+	if abs(motion.x) < 20:
 		return
 	cur_offset = 0
 	offset = float(abs(motion.x/x_speed))*max_offset
