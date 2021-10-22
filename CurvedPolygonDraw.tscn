@@ -1,13 +1,17 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://CurvedPolygonDraw.gd" type="Script" id=1]
 [ext_resource path="res://smooth_path_modified.gd" type="Script" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
+[ext_resource path="res://Creature_Body.gd" type="Script" id=4]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.87451, 0.823529, 0.823529, 1 )
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 31.7373, 31.7257 )
 
-[sub_resource type="Curve2D" id=1]
+[sub_resource type="Curve2D" id=3]
 _data = {
 "points": PoolVector2Array(  )
 }
@@ -37,14 +41,15 @@ __meta__ = {
 }
 
 [node name="Drawing_Panel" type="PanelContainer" parent="Edges"]
-margin_right = 511.0
+margin_right = 488.0
 margin_bottom = 320.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+custom_styles/panel = SubResource( 1 )
 
 [node name="Buttons" type="VBoxContainer" parent="Edges"]
-margin_left = 515.0
+margin_left = 492.0
 margin_right = 600.0
 margin_bottom = 320.0
 mouse_filter = 2
@@ -55,7 +60,7 @@ __meta__ = {
 [node name="close_curve" type="Button" parent="Edges/Buttons" groups=[
 "button",
 ]]
-margin_right = 85.0
+margin_right = 108.0
 margin_bottom = 20.0
 text = "close curve"
 __meta__ = {
@@ -66,16 +71,106 @@ __meta__ = {
 "button",
 ]]
 margin_top = 24.0
-margin_right = 85.0
+margin_right = 108.0
 margin_bottom = 44.0
 text = "clear curve"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Add_leg" type="Button" parent="Edges/Buttons" groups=[
+"button",
+]]
+margin_top = 48.0
+margin_right = 108.0
+margin_bottom = 68.0
+disabled = true
+text = "add leg"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="add_flipped" type="Button" parent="Edges/Buttons" groups=[
+"button",
+]]
+margin_top = 72.0
+margin_right = 108.0
+margin_bottom = 92.0
+disabled = true
+text = "add flipped_leg"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Edges/Buttons"]
+margin_top = 96.0
+margin_right = 108.0
+margin_bottom = 110.0
+align = 1
+valign = 1
+
+[node name="Colors" type="Label" parent="Edges/Buttons"]
+margin_top = 114.0
+margin_right = 108.0
+margin_bottom = 128.0
+text = "Body Colors"
+align = 1
+valign = 1
+
+[node name="Label4" type="Label" parent="Edges/Buttons/Colors"]
+margin_top = 18.0
+margin_right = 108.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+text = "RED"
+align = 1
+valign = 1
+
+[node name="red_slider" type="HSlider" parent="Edges/Buttons/Colors"]
+margin_top = 36.0
+margin_right = 108.0
+margin_bottom = 52.0
+max_value = 1.0
+step = 0.01
+value = 0.54
+
+[node name="Label2" type="Label" parent="Edges/Buttons/Colors"]
+margin_top = 56.0
+margin_right = 108.0
+margin_bottom = 70.0
+custom_colors/font_color = Color( 0, 1, 0.0862745, 1 )
+text = "GREEN"
+align = 1
+valign = 1
+
+[node name="green_slider" type="HSlider" parent="Edges/Buttons/Colors"]
+margin_top = 74.0
+margin_right = 108.0
+margin_bottom = 90.0
+max_value = 1.0
+step = 0.01
+value = 0.17
+
+[node name="Label3" type="Label" parent="Edges/Buttons/Colors"]
+margin_top = 94.0
+margin_right = 108.0
+margin_bottom = 108.0
+custom_colors/font_color = Color( 0, 0.0392157, 1, 1 )
+text = "BLUE"
+align = 1
+valign = 1
+
+[node name="blue_slider" type="HSlider" parent="Edges/Buttons/Colors"]
+margin_top = 112.0
+margin_right = 108.0
+margin_bottom = 128.0
+max_value = 1.0
+step = 0.01
+value = 0.59
+
 [node name="StaticBody2D" type="StaticBody2D" parent="Edges"]
-position = Vector2( 257.47, 290.433 )
-scale = Vector2( 7.62766, 0.531291 )
+position = Vector2( 272.572, 324.413 )
+scale = Vector2( 16.9477, 0.531291 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -90,17 +185,21 @@ shape = SubResource( 2 )
 [node name="Body" type="Node2D" parent="."]
 show_behind_parent = true
 
-[node name="Path" type="Path2D" parent="Body"]
+[node name="Area2D" type="Area2D" parent="Body"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body/Area2D"]
+
+[node name="Creature" type="KinematicBody2D" parent="Body"]
+show_behind_parent = true
+script = ExtResource( 4 )
+
+[node name="Path" type="Path2D" parent="Body/Creature"]
 self_modulate = Color( 1, 1, 1, 1 )
-curve = SubResource( 1 )
+curve = SubResource( 3 )
 script = ExtResource( 2 )
 spline_length = 10.0
 color = Color( 0, 0, 0, 1 )
 width = 1
-
-[node name="Area2D" type="Area2D" parent="Body"]
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body/Area2D"]
 
 [connection signal="mouse_entered" from="Edges/Drawing_Panel" to="." method="_on_Drawing_Panel_mouse_entered"]
 [connection signal="mouse_exited" from="Edges/Drawing_Panel" to="." method="_on_Drawing_Panel_mouse_exited"]
@@ -108,5 +207,12 @@ width = 1
 [connection signal="pressed" from="Edges/Buttons/close_curve" to="." method="_on_close_curve_pressed"]
 [connection signal="mouse_entered" from="Edges/Buttons/Clear_curve" to="." method="_on_Button_mouse_entered"]
 [connection signal="pressed" from="Edges/Buttons/Clear_curve" to="." method="_on_Clear_curve_pressed"]
+[connection signal="mouse_entered" from="Edges/Buttons/Add_leg" to="." method="_on_Button_mouse_entered"]
+[connection signal="pressed" from="Edges/Buttons/Add_leg" to="." method="_on_Add_leg_pressed"]
+[connection signal="mouse_entered" from="Edges/Buttons/add_flipped" to="." method="_on_Button_mouse_entered"]
+[connection signal="pressed" from="Edges/Buttons/add_flipped" to="." method="_on_add_flipped_pressed"]
+[connection signal="value_changed" from="Edges/Buttons/Colors/red_slider" to="." method="_on_red_slider_value_changed"]
+[connection signal="value_changed" from="Edges/Buttons/Colors/green_slider" to="." method="_on_green_slider_value_changed"]
+[connection signal="value_changed" from="Edges/Buttons/Colors/blue_slider" to="." method="_on_blue_slider_value_changed"]
 [connection signal="mouse_entered" from="Body/Area2D" to="." method="_on_Area2D_mouse_entered"]
 [connection signal="mouse_exited" from="Body/Area2D" to="." method="_on_Area2D_mouse_exited"]

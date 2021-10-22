@@ -44,7 +44,7 @@ func _ready():
 		$Spider/Body.add_child(ray)
 		ray.force_raycast_update()
 		i.set_pin(pin)
-		i.step(i.order)
+#		i.step(i.order)
 	_on_Spider_change_direction(1)
 	cur_dir = 1
 

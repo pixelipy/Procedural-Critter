@@ -1,15 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://IK.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Spider_Test.gd" type="Script" id=2]
 [ext_resource path="res://Spider_Body.gd" type="Script" id=3]
 [ext_resource path="res://Polygon_outline.gd" type="Script" id=4]
-[ext_resource path="res://smooth_path_modified.gd" type="Script" id=5]
-
-[sub_resource type="Curve2D" id=1]
-_data = {
-"points": PoolVector2Array( 0.146061, -10.8778, -0.146061, 10.8778, 56.7221, 0.472019, 5.05853, -1.42131, -5.05853, 1.42131, 45.7905, 15.6082, 7.70523, 8.50142, -7.70523, -8.50142, 11.7342, 11.6139, -3.59414, 4.10241, 3.59414, -4.10241, 12.7853, -11.3005, -4.87492, 0.025941, 4.87492, -0.025941, 32.0208, -17.5021, -3.6202, -2.45015, 3.6202, 2.45015, 48.9438, -12.8773, 0, 0, 0, 0, 56.7221, 0.472019 )
-}
 
 [node name="Spider_Test" type="Node2D"]
 script = ExtResource( 2 )
@@ -20,30 +14,21 @@ step_timer_wait_time = 0.2
 
 [node name="IK7" parent="Back_legs" instance=ExtResource( 1 )]
 position = Vector2( 40.6237, 9.70696 )
-length = [ 50, 50, 50 ]
-segmentCount = 3
 order = 1
-line_width = 1.0
 
 [node name="IK6" parent="Back_legs" instance=ExtResource( 1 )]
 position = Vector2( 29.1658, 9.70696 )
 length = [ 40, 40, 40 ]
-segmentCount = 3
-line_width = 1.0
 
 [node name="IK5" parent="Back_legs" instance=ExtResource( 1 )]
 position = Vector2( 20.3644, 9.70696 )
 length = [ 30, 30, 30 ]
-segmentCount = 3
 order = 1
-line_width = 1.0
 
 [node name="IK4" parent="Back_legs" instance=ExtResource( 1 )]
 position = Vector2( 13.3572, 9.70696 )
 length = [ 30, 30, 30 ]
-segmentCount = 3
 flipped = true
-line_width = 1.0
 
 [node name="Spider" type="KinematicBody2D" parent="."]
 script = ExtResource( 3 )
@@ -65,12 +50,6 @@ color = Color( 0.494118, 0.403922, 0.537255, 1 )
 polygon = PoolVector2Array( 10.7043, -3.40145, 8.6646, -7.28367, 5.90481, -9.98197, 3.0523, -11.2123, -0.0290671, -11.7272, -3.12125, -11.1421, -5.26484, -10.1565, -8.17233, -7.8449, -10.2388, -4.48441, -11.0486, -2.23259, -11.0486, -0.127973, -10.9083, 2.39757, -10.1366, 5.34403, -8.38279, 7.72927, -5.96294, 9.65216, -3.40186, 11.0265, -0.116332, 11.5719, 4.17476, 10.816, 7.03981, 9.30311, 9.36615, 7.16804, 10.7915, 4.15461, 11.12, 0.363105 )
 uv = PoolVector2Array( 23.6938, -0.850547, 5.90481, -9.98197, -0.0290671, -11.7272, -5.26484, -10.1565, -10.2388, -4.48441, -10.3261, 4.59092, -5.96294, 9.65216, -0.486027, 23.5723, 24.0625, 24, 24.0583, -0.607531 )
 script = ExtResource( 4 )
-
-[node name="Torso2" type="Path2D" parent="Spider/Body/Torso"]
-self_modulate = Color( 1, 1, 1, 1 )
-position = Vector2( -30.9391, 8.31932 )
-curve = SubResource( 1 )
-script = ExtResource( 5 )
 
 [node name="Head2" type="Polygon2D" parent="Spider/Body/Torso"]
 position = Vector2( 28.7142, 8.51377 )
@@ -101,30 +80,21 @@ cast_to = Vector2( 0, 70 )
 
 [node name="IK6" parent="Front_legs" instance=ExtResource( 1 )]
 position = Vector2( 42.0489, 9.70696 )
-length = [ 50, 50, 50 ]
-segmentCount = 3
-line_width = 1.0
 
 [node name="IK5" parent="Front_legs" instance=ExtResource( 1 )]
 position = Vector2( 30.591, 9.70696 )
 length = [ 40, 40, 40 ]
-segmentCount = 3
 order = 1
-line_width = 1.0
 
 [node name="IK4" parent="Front_legs" instance=ExtResource( 1 )]
 position = Vector2( 21.7896, 9.70696 )
 length = [ 30, 30, 30 ]
-segmentCount = 3
-line_width = 1.0
 
 [node name="IK3" parent="Front_legs" instance=ExtResource( 1 )]
 position = Vector2( 14.7824, 9.70696 )
 length = [ 30, 30, 30 ]
-segmentCount = 3
 flipped = true
 order = 1
-line_width = 1.0
 
 [node name="min_step_timer" type="Timer" parent="."]
 wait_time = 0.1

@@ -6,4 +6,3 @@
 
 [node name="IK" parent="." instance=ExtResource( 1 )]
 position = Vector2( 259.866, 167.12 )
-segmentCount = 3

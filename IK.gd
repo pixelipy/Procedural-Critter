@@ -18,7 +18,7 @@ var ray_cast : RayCast2D = null
 onready var target_body = $target
 
 export var length : Array = [70,70,70]
-export var segmentCount: = 5
+export var segmentCount: = 3
 export var flipped = false
 export var step_smoothness = 0.2
 export var step_height = 50.0
@@ -79,10 +79,6 @@ func _draw()->void:
 	point_pool.append(point_pool[1])
 	
 	draw_polyline(point_pool,Color.black,line_width)
-	
-	
-	
-
 
 func _ready()->void:
 	for i in length.size():
@@ -122,6 +118,7 @@ func set_pin(initial_pin : Position2D):
 	pass
 
 func _process(_delta:float)->void:
+	pinPos += Vector2.RIGHT
 	var new_target_pos : Vector2= start_position
 	
 	if step_time >=0 and step_time <=1.0:
