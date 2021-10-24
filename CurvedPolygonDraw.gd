@@ -8,13 +8,15 @@ onready var curve = path.curve
 #draw settings
 export var point_circle_size = 3
 export var handle_size = 4
+var shadow_border = 15
+var shadow_offset = 13
+var shadow_levels = 2
 
 #active modes. Only on can be active at a time
 var add_mode = true
 var edit_mode = false
 var add_member_mode = false
 var flipped = false
-
 #control the points that are selected, or about to be selected
 var selected = -1
 var selected_in_point = false
@@ -23,6 +25,7 @@ var to_select = -1
 var body_selected = false
 var original_grab_position = Vector2.ZERO
 var original_curve_points = []
+var light_direction = Vector2.ZERO
 
 #control the selections range
 var point_select_range = 4
@@ -35,18 +38,27 @@ var can_add_point = true
 var held = false
 var inside_body = false
 var hide_points = false
+var shadow_intensity = 0.5
+var invalid_shape = false
 
 #scenes to be created and saved
 var body_polygon = null
+var shadow_polygons = []
+
+var shadow_polygon : Polygon2D
+var on_light = false
+var handling_light = false
+var center = Vector2.ZERO
 onready var leg_scene = preload("res://IK.tscn")
 onready var area = $Body/Area2D
 onready var collisionShape = $Body/Area2D/CollisionPolygon2D
+onready var add_material = preload("res://materials/add.tres")
+onready var light = $Light
 
 func _ready():
 	for i in get_tree().get_nodes_in_group("button"):
 		i.connect("mouse_entered", self, "on_mouse_entered")
-
-
+	
 #check for inputs
 func _input(event):
 	if event is InputEventMouseButton:
@@ -58,8 +70,13 @@ func _input(event):
 				add_member_mode = false
 				return
 		
+		if Input.is_action_pressed("mb_left") and on_light:
+			handling_light = true
+		else:
+			handling_light = false
+		
 		#adds a point into a position
-		if event.is_action_pressed("mb_left") and can_add_point and add_mode:
+		if event.is_action_pressed("mb_left") and can_add_point and add_mode and !on_light and !handling_light:
 			add_point(get_global_mouse_position())
 		
 		#checks if one point on the curve has been selected
@@ -126,6 +143,20 @@ func _input(event):
 				update()
 				pass
 
+func light_update():
+	var center_point = Vector2.ZERO
+	if path.curve.get_point_count() <=0:
+		return
+	
+	for i in path.curve.get_point_count():
+		center_point += path.curve.get_point_position(i)
+	center_point = center_point/path.curve.get_point_count()
+	light_direction = (light.position - center_point).normalized()
+	pass
+
+
+
+
 
 #physics process
 func _physics_process(delta):
@@ -133,7 +164,14 @@ func _physics_process(delta):
 		can_add_point = false
 	else:
 		can_add_point = true
-	if Input.is_action_pressed("mb_left") and edit_mode:
+	
+	if Input.is_action_pressed("mb_left") and handling_light:
+		light.global_position = get_global_mouse_position()
+		light_update()
+		body_update()
+		shadow_update()
+		pass
+	elif Input.is_action_pressed("mb_left") and edit_mode:
 		#if main point is selected
 		if selected != -1:
 			var first_point_selected = (selected ==0 or selected == path.curve.get_point_count()-1)
@@ -157,22 +195,25 @@ func _physics_process(delta):
 					path.curve.set_point_out(path.curve.get_point_count()-1,get_global_mouse_position()-path.curve.get_point_position(path.curve.get_point_count()-1))
 				else:
 					path.curve.set_point_out(selected,get_global_mouse_position()-path.curve.get_point_position(selected))
-		if body_selected:
+		if body_selected and !invalid_shape:
 			var grab_offset = get_global_mouse_position()-original_grab_position
 			for i in curve.get_point_count():
 				curve.set_point_position(i,original_curve_points[i]+grab_offset)
-			
-			
-			
 			pass
-		update()
-		path.update()
+		
+		
 		body_update()
+		shadow_update()
+		collisionShapeUpdate()
+		path.update()
+		update()
+		
 	if Input.is_action_just_released("mb_left") and edit_mode:
 		held = false
 		selected_in_point = false
 		selected_out_point = false
 		body_selected = false
+		handling_light = false
 	pass
 
 
@@ -180,12 +221,15 @@ func _physics_process(delta):
 func _draw():
 	for i in path.curve.get_point_count():
 		
-		if hide_points:
+		if hide_points and !invalid_shape:
+			if path.visible:
+				path.visible = false
 			return
+		if !path.visible:
+			path.visible = true
 		var point_pos = path.curve.get_point_position(i)
 		var handle_in_pos = point_pos+path.curve.get_point_in(i)
 		var handle_out_pos = point_pos+path.curve.get_point_out(i)
-		
 		
 		if selected ==i:
 			var rect_in = Rect2(handle_in_pos.x-handle_size/2,handle_in_pos.y-handle_size/2,handle_size,handle_size)
@@ -199,13 +243,11 @@ func _draw():
 			draw_rect(rect_out,Color.black,false,2)
 			draw_rect(rect_out,Color.blue)
 			
-			
 			draw_circle(point_pos,point_circle_size+1,Color.black)
 			draw_circle(point_pos,point_circle_size,Color.yellow)
 		else:
 			draw_circle(point_pos,point_circle_size+1,Color.black)
 			draw_circle(point_pos,point_circle_size,Color.red)
-
 
 # add point into position
 func add_point(pos : Vector2):
@@ -239,6 +281,7 @@ func _on_Clear_curve_pressed():
 	add_mode = true
 	path.curve.clear_points()
 	update()
+	path.visible = true
 	path.update()
 	body_delete()
 	$Edges/Buttons/close_curve.disabled = false
@@ -251,13 +294,20 @@ func _on_close_curve_pressed():
 		return
 	add_mode = false
 	edit_mode = true
+#	path.visible = false
 	$Edges/Buttons/Add_leg.disabled = false
 	$Edges/Buttons/add_flipped.disabled = false
 	$Edges/Buttons/close_curve.disabled = true
 	var first_point_pos = path.curve.get_point_position(0)
-	add_point(first_point_pos)
-	body_create(path.curve.get_baked_points())
 	
+	add_point(first_point_pos)
+	light_update()
+	body_create()
+	yield(get_tree(),"idle_frame")
+	light_update()
+	body_update()
+	shadow_update()
+	collisionShapeUpdate()
 	pass # Replace with function body.
 
 
@@ -299,16 +349,51 @@ func _on_add_flipped_pressed():
 
 
 #create, update and delete body
-func body_create(points : PoolVector2Array):
-	var polygon = points
-	
+func body_create():
+	var polygon = curve.get_baked_points()
 	body_polygon = Polygon2D.new()
-	body_polygon.polygon = polygon
+	var body_polygon_points : PoolVector2Array = []
+	for i in polygon.size():
+		body_polygon_points.append(polygon[i]+light_direction*shadow_offset)
+	
+	body_polygon.polygon = body_polygon_points
 	body_polygon.color = Color.blueviolet
 	
+	for j in shadow_levels:
+		var shadow_polygon_points : PoolVector2Array = []
+		var new_shadow_polygon = Polygon2D.new()
+		new_shadow_polygon.color = body_polygon.color.darkened((j+1)*shadow_intensity/float(shadow_levels))
+		var is_polygon_clockwise = Geometry.is_polygon_clockwise(polygon)
+		var rotation = PI/2
+		if !is_polygon_clockwise:
+			rotation = -PI/2
+		for i in polygon.size():
+			var previous_point_idx = wrapi(i-1,0,polygon.size())
+			var next_point_idx = wrapi(i+1,0,polygon.size())
+			
+			var previous_point = polygon[previous_point_idx]
+			var next_point = polygon[next_point_idx]
+			
+			var vector : Vector2= (next_point-previous_point).normalized()
+			var normal = vector.rotated(rotation)
+			
+			if j != shadow_polygons.size()-1:
+				var last=shadow_polygons.size()-1
+				shadow_polygon_points.append(polygon[i]+normal*shadow_border*(j+1)/float(shadow_levels)+light_direction*shadow_offset*(last-j)/shadow_levels)
+			else:
+				shadow_polygon_points.append(polygon[i]+normal*shadow_border*(j+1)/float(shadow_levels))
+		new_shadow_polygon.polygon = shadow_polygon_points
+		
+		shadow_polygons.append(new_shadow_polygon)
+	
+	for i in range(shadow_polygons.size()-1,-1,-1):
+		$Body/Creature.add_child(shadow_polygons[i])
+		shadow_polygons[i].show_behind_parent = true
 	$Body/Creature.add_child(body_polygon)
 	
-	collisionShape.polygon = points
+#	body_polygon.add_child(shadow_polygon)
+#	collisionShape.polygon = points
+#	body_polygon.visible = false
 	body_polygon.show_behind_parent = true
 	pass
 
@@ -316,14 +401,67 @@ func body_create(points : PoolVector2Array):
 func body_update():
 	if body_polygon != null:
 		var polygon = path.curve.get_baked_points()
-		body_polygon.polygon = polygon
-		collisionShape.polygon = polygon
+		var body_polygon_points : PoolVector2Array = []
+		
+		if !Geometry.triangulate_polygon(polygon).empty():
+			for i in polygon.size():
+				body_polygon_points.append(polygon[i]+light_direction*shadow_offset)
+			body_polygon.polygon = body_polygon_points
+			path.color = Color.black
+			invalid_shape = false
+		else:
+			invalid_shape = true
+			path.color = Color.red
+
+func shadow_update():
+	if shadow_polygons != []:
+		var polygon = path.curve.get_baked_points()
+		var is_polygon_clockwise = Geometry.is_polygon_clockwise(polygon)
+		var rotation = PI/2
+		if !is_polygon_clockwise:
+			rotation = -PI/2
+		for j in shadow_polygons.size():
+			var shadow_polygon_points : PoolVector2Array = []
+			for i in polygon.size():
+				
+				var previous_point_idx = wrapi(i-1,0,polygon.size())
+				var next_point_idx = wrapi(i+1,0,polygon.size())
+				
+				var previous_point = polygon[previous_point_idx]
+				var next_point = polygon[next_point_idx]
+				
+				var vector : Vector2= (next_point-previous_point).normalized()
+				var normal = vector.rotated(rotation)
+				if j != shadow_polygons.size()-1:
+					var last=shadow_polygons.size()-1
+					shadow_polygon_points.append(polygon[i]+normal*shadow_border*(j+1)/float(shadow_levels)+light_direction*shadow_offset*(last-j)/shadow_levels)
+				else:
+					shadow_polygon_points.append(polygon[i]+normal*shadow_border*(j+1)/float(shadow_levels))
+			
+			if !Geometry.triangulate_polygon(shadow_polygon_points).empty() and !Geometry.triangulate_polygon(polygon).empty():
+				shadow_polygons[j].polygon = shadow_polygon_points
+	pass
+
+func collisionShapeUpdate():
+	if shadow_polygons != []:
+		var polygon = shadow_polygons[shadow_polygons.size()-1].polygon
+		if !Geometry.triangulate_polygon(polygon).empty():
+			var shape = Geometry.convex_hull_2d(polygon)
+			collisionShape.polygon = shape
+		pass
+	pass
+
+
+
 
 
 func body_delete():
 	if body_polygon != null:
 		body_polygon.queue_free()
 		body_polygon = null
+	if shadow_polygon != null:
+		shadow_polygon.queue_free()
+		shadow_polygon = null
 	pass
 
 
@@ -378,6 +516,8 @@ func _on_red_slider_value_changed(value):
 		return
 	var cur_color = body_polygon.color
 	body_polygon.color = Color(value,cur_color.g,cur_color.b)
+	for i in shadow_polygons.size():
+		shadow_polygons[i].color = body_polygon.color.darkened((i+1)*shadow_intensity/float(shadow_levels))
 	pass # Replace with function body.
 
 func _on_green_slider_value_changed(value):
@@ -385,6 +525,8 @@ func _on_green_slider_value_changed(value):
 		return
 	var cur_color = body_polygon.color
 	body_polygon.color = Color(cur_color.r,value,cur_color.b)
+	for i in shadow_polygons.size():
+		shadow_polygons[i].color = body_polygon.color.darkened((i+1)*shadow_intensity/float(shadow_levels))
 	pass # Replace with function body.
 
 func _on_blue_slider_value_changed(value):
@@ -392,7 +534,14 @@ func _on_blue_slider_value_changed(value):
 		return
 	var cur_color = body_polygon.color
 	body_polygon.color = Color(cur_color.r,cur_color.g,value)
+	for i in shadow_polygons.size():
+		shadow_polygons[i].color = body_polygon.color.darkened((i+1)*shadow_intensity/float(shadow_levels))
 	pass # Replace with function body.
 
+func _on_Light_mouse_entered():
+	on_light = true
+	pass # Replace with function body.
 
-
+func _on_Light_mouse_exited():
+	on_light = false
+	pass # Replace with function body.

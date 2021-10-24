@@ -9,7 +9,7 @@ func _draw():
 	var poly = get_polygon()
 	poly.append(poly[0])
 	poly.append(poly[1])
-	
+	set_uv(poly)
 	draw_polyline(poly,outline_color,width)
 
 func set_color(value):

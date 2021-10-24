@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://CurvedPolygonDraw.gd" type="Script" id=1]
 [ext_resource path="res://smooth_path_modified.gd" type="Script" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
 [ext_resource path="res://Creature_Body.gd" type="Script" id=4]
+[ext_resource path="res://lightbulb.png" type="Texture" id=5]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.87451, 0.823529, 0.823529, 1 )
@@ -15,6 +16,9 @@ extents = Vector2( 31.7373, 31.7257 )
 _data = {
 "points": PoolVector2Array(  )
 }
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 71.2167, 78.9213 )
 
 [node name="Creature_Editor" type="Control"]
 anchor_right = 1.0
@@ -201,6 +205,20 @@ spline_length = 10.0
 color = Color( 0, 0, 0, 1 )
 width = 1
 
+[node name="Light" type="Area2D" parent="."]
+position = Vector2( 61.115, 54.7654 )
+scale = Vector2( 0.4, 0.4 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="light" type="Sprite" parent="Light"]
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Light"]
+shape = SubResource( 4 )
+
 [connection signal="mouse_entered" from="Edges/Drawing_Panel" to="." method="_on_Drawing_Panel_mouse_entered"]
 [connection signal="mouse_exited" from="Edges/Drawing_Panel" to="." method="_on_Drawing_Panel_mouse_exited"]
 [connection signal="mouse_entered" from="Edges/Buttons/close_curve" to="." method="_on_Button_mouse_entered"]
@@ -216,3 +234,5 @@ width = 1
 [connection signal="value_changed" from="Edges/Buttons/Colors/blue_slider" to="." method="_on_blue_slider_value_changed"]
 [connection signal="mouse_entered" from="Body/Area2D" to="." method="_on_Area2D_mouse_entered"]
 [connection signal="mouse_exited" from="Body/Area2D" to="." method="_on_Area2D_mouse_exited"]
+[connection signal="mouse_entered" from="Light" to="." method="_on_Light_mouse_entered"]
+[connection signal="mouse_exited" from="Light" to="." method="_on_Light_mouse_exited"]

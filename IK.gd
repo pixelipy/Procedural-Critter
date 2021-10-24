@@ -17,7 +17,7 @@ var ray_cast : RayCast2D = null
 
 onready var target_body = $target
 
-export var length : Array = [70,70,70]
+export var length : Array = [70,70,70,70]
 export var segmentCount: = 3
 export var flipped = false
 export var step_smoothness = 0.2
@@ -45,7 +45,11 @@ func _draw()->void:
 	var colors = []
 	
 	for i in range(posList.size()-1):
-		var vec = (draw_start[i+1]-draw_start[i]).normalized()
+		var vec
+		if i > 0 and i < posList.size()-1:
+			vec = (draw_start[i+1]-draw_start[i-1]).normalized()
+		else:
+			vec = (draw_start[i+1]-draw_start[i]).normalized()
 		var normal_vector = Vector2(vec.y,-vec.x).normalized()
 		normal_vectors.append(normal_vector)
 	
@@ -73,12 +77,12 @@ func _draw()->void:
 	
 	
 	if !Geometry.triangulate_polygon(point_pool).empty():
-		draw_colored_polygon(point_pool, leg_color)
+		draw_colored_polygon(point_pool, leg_color,point_pool,null,null,true)
 	
 	point_pool.append(point_pool[0])
 	point_pool.append(point_pool[1])
 	
-	draw_polyline(point_pool,Color.black,line_width)
+#	draw_polyline(point_pool,Color.black,line_width)
 
 func _ready()->void:
 	for i in length.size():
@@ -118,7 +122,6 @@ func set_pin(initial_pin : Position2D):
 	pass
 
 func _process(_delta:float)->void:
-	pinPos += Vector2.RIGHT
 	var new_target_pos : Vector2= start_position
 	
 	if step_time >=0 and step_time <=1.0:
