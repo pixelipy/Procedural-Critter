@@ -39,10 +39,8 @@ signal step
 signal finished_step
 	
 func _draw()->void:
-	var col: = Color.brown
 	var normal_vectors = []
 	var points = []
-	var colors = []
 	
 	for i in range(posList.size()-1):
 		var vec
@@ -100,8 +98,8 @@ func _ready()->void:
 	for i in posList.size():
 		draw_start.append(posList[i])
 
-func flip(flipped : bool):
-	if flipped:
+func flip(_flipped : bool):
+	if _flipped:
 		clockwiseConstraintAngle = anticlockwise_constraint
 		antiClockwiseConstraintAngle = clockwise_constraint
 	else:
@@ -157,14 +155,14 @@ func update_target_position(new_position : Vector2):
 	pass
 
 func update_IK():
-	var distance:float = (endPos -pinPos).length()
-	var errorDist:float = (endPos -posList[posList.size() -1]).length()
+	var _distance:float = (endPos -pinPos).length()
+	var _errorDist:float = (endPos -posList[posList.size() -1]).length()
 	var itterations: = 0
 	# limit the itteration count
 	while itterations < 10:
 		backward_reach()
 		forward_reach()
-		errorDist = (endPos -posList[posList.size() -1]).length()
+		_errorDist = (endPos -posList[posList.size() -1]).length()
 		itterations += 1
 	for i in posList.size():
 		draw_start[i] = lerp(draw_start[i],posList[i],step_smoothness)

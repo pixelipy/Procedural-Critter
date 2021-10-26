@@ -1,7 +1,7 @@
 extends KinematicBody2D
 
-onready var low_check = $lowCheck
-onready var high_check = $highCheck
+#onready var low_check = $lowCheck
+#onready var high_check = $highCheck
 
 var y_speed = 60.0
 var x_speed = 120.0

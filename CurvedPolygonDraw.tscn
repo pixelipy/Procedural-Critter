@@ -1,16 +1,17 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://CurvedPolygonDraw.gd" type="Script" id=1]
 [ext_resource path="res://smooth_path_modified.gd" type="Script" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
 [ext_resource path="res://Creature_Body.gd" type="Script" id=4]
 [ext_resource path="res://lightbulb.png" type="Texture" id=5]
+[ext_resource path="res://Fonts/pixel_font_resource.tres" type="DynamicFont" id=6]
 
-[sub_resource type="StyleBoxFlat" id=1]
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 1.4, 0.0, 0, 0 ]
+
+[sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.87451, 0.823529, 0.823529, 1 )
-
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 31.7373, 31.7257 )
 
 [sub_resource type="Curve2D" id=3]
 _data = {
@@ -20,6 +21,9 @@ _data = {
 [sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 71.2167, 78.9213 )
 
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 31.7373, 31.7257 )
+
 [node name="Creature_Editor" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -28,15 +32,16 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+lighting_curve = SubResource( 1 )
 
 [node name="Edges" type="HBoxContainer" parent="."]
 show_behind_parent = true
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 20.0
-margin_top = 20.0
-margin_right = -20.0
-margin_bottom = -20.0
+margin_left = 7.0
+margin_top = 13.0
+margin_right = -8.0
+margin_bottom = -14.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -45,146 +50,337 @@ __meta__ = {
 }
 
 [node name="Drawing_Panel" type="PanelContainer" parent="Edges"]
-margin_right = 488.0
-margin_bottom = 320.0
+margin_right = 490.0
+margin_bottom = 333.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 2 )
 
-[node name="Buttons" type="VBoxContainer" parent="Edges"]
-margin_left = 492.0
-margin_right = 600.0
-margin_bottom = 320.0
+[node name="ScrollContainer" type="ScrollContainer" parent="Edges"]
+margin_left = 494.0
+margin_right = 625.0
+margin_bottom = 333.0
+scroll_horizontal_enabled = false
+
+[node name="Buttons" type="VBoxContainer" parent="Edges/ScrollContainer"]
+margin_right = 119.0
+margin_bottom = 423.0
 mouse_filter = 2
+size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="close_curve" type="Button" parent="Edges/Buttons" groups=[
-"button",
+[node name="Title" type="PanelContainer" parent="Edges/ScrollContainer/Buttons"]
+margin_right = 119.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="Edges/ScrollContainer/Buttons/Title"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 112.0
+margin_bottom = 18.0
+custom_fonts/font = ExtResource( 6 )
+text = "Creature Customization"
+
+[node name="add_new_body" type="PanelContainer" parent="Edges/ScrollContainer/Buttons"]
+margin_top = 29.0
+margin_right = 119.0
+margin_bottom = 60.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Title" type="Button" parent="Edges/ScrollContainer/Buttons/add_new_body"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 112.0
+margin_bottom = 24.0
+custom_fonts/font = ExtResource( 6 )
+text = " + Add New Body"
+
+[node name="Curve_edit" type="PanelContainer" parent="Edges/ScrollContainer/Buttons"]
+margin_top = 64.0
+margin_right = 119.0
+margin_bottom = 131.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Edges/ScrollContainer/Buttons/Curve_edit"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 112.0
+margin_bottom = 60.0
+
+[node name="Polygon_Options" type="Label" parent="Edges/ScrollContainer/Buttons/Curve_edit/VBoxContainer"]
+margin_right = 105.0
+margin_bottom = 11.0
+custom_fonts/font = ExtResource( 6 )
+text = "Curve Edit"
+align = 1
+valign = 1
+
+[node name="close_curve" type="Button" parent="Edges/ScrollContainer/Buttons/Curve_edit/VBoxContainer" groups=[
+"mouse_enter",
 ]]
-margin_right = 108.0
-margin_bottom = 20.0
+margin_top = 15.0
+margin_right = 105.0
+margin_bottom = 32.0
+custom_fonts/font = ExtResource( 6 )
 text = "close curve"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Clear_curve" type="Button" parent="Edges/Buttons" groups=[
-"button",
+[node name="Clear_curve" type="Button" parent="Edges/ScrollContainer/Buttons/Curve_edit/VBoxContainer" groups=[
+"mouse_enter",
 ]]
-margin_top = 24.0
-margin_right = 108.0
-margin_bottom = 44.0
+margin_top = 36.0
+margin_right = 105.0
+margin_bottom = 53.0
+custom_fonts/font = ExtResource( 6 )
 text = "clear curve"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Add_leg" type="Button" parent="Edges/Buttons" groups=[
-"button",
+[node name="body_edit" type="PanelContainer" parent="Edges/ScrollContainer/Buttons"]
+margin_top = 135.0
+margin_right = 119.0
+margin_bottom = 352.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Edges/ScrollContainer/Buttons/body_edit"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 112.0
+margin_bottom = 210.0
+
+[node name="Shadow_layers" type="Label" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer"]
+margin_right = 105.0
+margin_bottom = 11.0
+custom_fonts/font = ExtResource( 6 )
+text = "Body Customize"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Body_Layers" type="Label" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer"]
+margin_top = 15.0
+margin_right = 105.0
+margin_bottom = 26.0
+custom_fonts/font = ExtResource( 6 )
+text = "Body Layers"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Body_Layers2" type="HBoxContainer" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer"]
+margin_top = 30.0
+margin_right = 105.0
+margin_bottom = 47.0
+
+[node name="-" type="Button" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Body_Layers2" groups=[
+"mouse_enter",
 ]]
-margin_top = 48.0
-margin_right = 108.0
-margin_bottom = 68.0
+margin_right = 17.0
+margin_bottom = 17.0
+custom_fonts/font = ExtResource( 6 )
+text = "-"
+
+[node name="+" type="Button" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Body_Layers2" groups=[
+"mouse_enter",
+]]
+margin_left = 21.0
+margin_right = 39.0
+margin_bottom = 17.0
+custom_fonts/font = ExtResource( 6 )
+text = "+"
+
+[node name="Panel" type="Panel" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Body_Layers2"]
+margin_left = 43.0
+margin_right = 105.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+
+[node name="value" type="Label" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Body_Layers2/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_fonts/font = ExtResource( 6 )
+text = "x"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Border_Thickness" type="Label" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer"]
+margin_top = 51.0
+margin_right = 105.0
+margin_bottom = 62.0
+custom_fonts/font = ExtResource( 6 )
+text = "Border Thickness"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Border_Thickness2" type="HBoxContainer" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer"]
+margin_top = 66.0
+margin_right = 105.0
+margin_bottom = 83.0
+
+[node name="-" type="Button" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Border_Thickness2" groups=[
+"mouse_enter",
+]]
+margin_right = 17.0
+margin_bottom = 17.0
+custom_fonts/font = ExtResource( 6 )
+text = "-"
+
+[node name="+" type="Button" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Border_Thickness2" groups=[
+"mouse_enter",
+]]
+margin_left = 21.0
+margin_right = 39.0
+margin_bottom = 17.0
+custom_fonts/font = ExtResource( 6 )
+text = "+"
+
+[node name="Panel" type="Panel" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Border_Thickness2"]
+margin_left = 43.0
+margin_right = 105.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+
+[node name="value" type="Label" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Border_Thickness2/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_fonts/font = ExtResource( 6 )
+text = "x"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Colors" type="Label" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer"]
+margin_top = 87.0
+margin_right = 105.0
+margin_bottom = 98.0
+custom_fonts/font = ExtResource( 6 )
+text = "Body Colors"
+align = 1
+valign = 1
+
+[node name="Label4" type="Label" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer"]
+margin_top = 102.0
+margin_right = 105.0
+margin_bottom = 113.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+text = "RED"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="red_slider" type="HSlider" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer" groups=[
+"mouse_enter",
+]]
+margin_top = 117.0
+margin_right = 105.0
+margin_bottom = 133.0
+max_value = 1.0
+step = 0.01
+value = 0.54
+
+[node name="Label2" type="Label" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer"]
+margin_top = 137.0
+margin_right = 105.0
+margin_bottom = 148.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color = Color( 0, 1, 0.0862745, 1 )
+text = "GREEN"
+align = 1
+valign = 1
+
+[node name="green_slider" type="HSlider" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer" groups=[
+"mouse_enter",
+]]
+margin_top = 152.0
+margin_right = 105.0
+margin_bottom = 168.0
+max_value = 1.0
+step = 0.01
+value = 0.17
+
+[node name="Label3" type="Label" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer"]
+margin_top = 172.0
+margin_right = 105.0
+margin_bottom = 183.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color = Color( 0, 0.0392157, 1, 1 )
+text = "BLUE"
+align = 1
+valign = 1
+
+[node name="blue_slider" type="HSlider" parent="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer" groups=[
+"mouse_enter",
+]]
+margin_top = 187.0
+margin_right = 105.0
+margin_bottom = 203.0
+max_value = 1.0
+step = 0.01
+value = 0.59
+
+[node name="member_edit" type="PanelContainer" parent="Edges/ScrollContainer/Buttons"]
+margin_top = 356.0
+margin_right = 119.0
+margin_bottom = 423.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Edges/ScrollContainer/Buttons/member_edit"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 112.0
+margin_bottom = 60.0
+
+[node name="Polygon_Options2" type="Label" parent="Edges/ScrollContainer/Buttons/member_edit/VBoxContainer"]
+margin_right = 105.0
+margin_bottom = 11.0
+custom_fonts/font = ExtResource( 6 )
+text = "Add member"
+align = 1
+valign = 1
+
+[node name="Add_leg" type="Button" parent="Edges/ScrollContainer/Buttons/member_edit/VBoxContainer" groups=[
+"mouse_enter",
+]]
+margin_top = 15.0
+margin_right = 105.0
+margin_bottom = 32.0
+custom_fonts/font = ExtResource( 6 )
 disabled = true
 text = "add leg"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="add_flipped" type="Button" parent="Edges/Buttons" groups=[
-"button",
+[node name="add_flipped" type="Button" parent="Edges/ScrollContainer/Buttons/member_edit/VBoxContainer" groups=[
+"mouse_enter",
 ]]
-margin_top = 72.0
-margin_right = 108.0
-margin_bottom = 92.0
+margin_top = 36.0
+margin_right = 105.0
+margin_bottom = 53.0
+custom_fonts/font = ExtResource( 6 )
 disabled = true
 text = "add flipped_leg"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="Label" type="Label" parent="Edges/Buttons"]
-margin_top = 96.0
-margin_right = 108.0
-margin_bottom = 110.0
-align = 1
-valign = 1
-
-[node name="Colors" type="Label" parent="Edges/Buttons"]
-margin_top = 114.0
-margin_right = 108.0
-margin_bottom = 128.0
-text = "Body Colors"
-align = 1
-valign = 1
-
-[node name="Label4" type="Label" parent="Edges/Buttons/Colors"]
-margin_top = 18.0
-margin_right = 108.0
-margin_bottom = 32.0
-custom_colors/font_color = Color( 1, 0, 0, 1 )
-text = "RED"
-align = 1
-valign = 1
-
-[node name="red_slider" type="HSlider" parent="Edges/Buttons/Colors"]
-margin_top = 36.0
-margin_right = 108.0
-margin_bottom = 52.0
-max_value = 1.0
-step = 0.01
-value = 0.54
-
-[node name="Label2" type="Label" parent="Edges/Buttons/Colors"]
-margin_top = 56.0
-margin_right = 108.0
-margin_bottom = 70.0
-custom_colors/font_color = Color( 0, 1, 0.0862745, 1 )
-text = "GREEN"
-align = 1
-valign = 1
-
-[node name="green_slider" type="HSlider" parent="Edges/Buttons/Colors"]
-margin_top = 74.0
-margin_right = 108.0
-margin_bottom = 90.0
-max_value = 1.0
-step = 0.01
-value = 0.17
-
-[node name="Label3" type="Label" parent="Edges/Buttons/Colors"]
-margin_top = 94.0
-margin_right = 108.0
-margin_bottom = 108.0
-custom_colors/font_color = Color( 0, 0.0392157, 1, 1 )
-text = "BLUE"
-align = 1
-valign = 1
-
-[node name="blue_slider" type="HSlider" parent="Edges/Buttons/Colors"]
-margin_top = 112.0
-margin_right = 108.0
-margin_bottom = 128.0
-max_value = 1.0
-step = 0.01
-value = 0.59
-
-[node name="StaticBody2D" type="StaticBody2D" parent="Edges"]
-position = Vector2( 272.572, 324.413 )
-scale = Vector2( 16.9477, 0.531291 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Sprite" type="Sprite" parent="Edges/StaticBody2D"]
-self_modulate = Color( 0, 0, 0, 1 )
-texture = ExtResource( 3 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Edges/StaticBody2D"]
-shape = SubResource( 2 )
 
 [node name="Body" type="Node2D" parent="."]
 show_behind_parent = true
@@ -219,19 +415,33 @@ texture = ExtResource( 5 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Light"]
 shape = SubResource( 4 )
 
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2( 249.31, 323.17 )
+scale = Vector2( 7.8277, 0.531291 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="StaticBody2D"]
+self_modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 5 )
+
 [connection signal="mouse_entered" from="Edges/Drawing_Panel" to="." method="_on_Drawing_Panel_mouse_entered"]
 [connection signal="mouse_exited" from="Edges/Drawing_Panel" to="." method="_on_Drawing_Panel_mouse_exited"]
-[connection signal="mouse_entered" from="Edges/Buttons/close_curve" to="." method="_on_Button_mouse_entered"]
-[connection signal="pressed" from="Edges/Buttons/close_curve" to="." method="_on_close_curve_pressed"]
-[connection signal="mouse_entered" from="Edges/Buttons/Clear_curve" to="." method="_on_Button_mouse_entered"]
-[connection signal="pressed" from="Edges/Buttons/Clear_curve" to="." method="_on_Clear_curve_pressed"]
-[connection signal="mouse_entered" from="Edges/Buttons/Add_leg" to="." method="_on_Button_mouse_entered"]
-[connection signal="pressed" from="Edges/Buttons/Add_leg" to="." method="_on_Add_leg_pressed"]
-[connection signal="mouse_entered" from="Edges/Buttons/add_flipped" to="." method="_on_Button_mouse_entered"]
-[connection signal="pressed" from="Edges/Buttons/add_flipped" to="." method="_on_add_flipped_pressed"]
-[connection signal="value_changed" from="Edges/Buttons/Colors/red_slider" to="." method="_on_red_slider_value_changed"]
-[connection signal="value_changed" from="Edges/Buttons/Colors/green_slider" to="." method="_on_green_slider_value_changed"]
-[connection signal="value_changed" from="Edges/Buttons/Colors/blue_slider" to="." method="_on_blue_slider_value_changed"]
+[connection signal="pressed" from="Edges/ScrollContainer/Buttons/Curve_edit/VBoxContainer/close_curve" to="." method="_on_close_curve_pressed"]
+[connection signal="pressed" from="Edges/ScrollContainer/Buttons/Curve_edit/VBoxContainer/Clear_curve" to="." method="_on_Clear_curve_pressed"]
+[connection signal="pressed" from="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Body_Layers2/-" to="." method="on_body_layers_minus_pressed"]
+[connection signal="pressed" from="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Body_Layers2/+" to="." method="on_body_layers_plus_pressed"]
+[connection signal="pressed" from="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Border_Thickness2/-" to="." method="on_border_thickness_minus_pressed"]
+[connection signal="pressed" from="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/Border_Thickness2/+" to="." method="on_border_thickness_plus_pressed"]
+[connection signal="value_changed" from="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/red_slider" to="." method="_on_red_slider_value_changed"]
+[connection signal="value_changed" from="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/green_slider" to="." method="_on_green_slider_value_changed"]
+[connection signal="value_changed" from="Edges/ScrollContainer/Buttons/body_edit/VBoxContainer/blue_slider" to="." method="_on_blue_slider_value_changed"]
+[connection signal="pressed" from="Edges/ScrollContainer/Buttons/member_edit/VBoxContainer/Add_leg" to="." method="_on_Add_leg_pressed"]
+[connection signal="pressed" from="Edges/ScrollContainer/Buttons/member_edit/VBoxContainer/add_flipped" to="." method="_on_add_flipped_pressed"]
 [connection signal="mouse_entered" from="Body/Area2D" to="." method="_on_Area2D_mouse_entered"]
 [connection signal="mouse_exited" from="Body/Area2D" to="." method="_on_Area2D_mouse_exited"]
 [connection signal="mouse_entered" from="Light" to="." method="_on_Light_mouse_entered"]
